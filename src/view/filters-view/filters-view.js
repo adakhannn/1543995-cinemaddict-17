@@ -1,10 +1,9 @@
-import {createElement} from '../render.js';
+import {createElement} from '../../render.js';
+import {filtersTemplate} from './filters-tpl';
 
-const moreButtonTemplate = () => '<button class="films-list__show-more">Show more</button>';
-
-export default class MoreButtonView {
+export default class FiltersView {
   getTemplate() {
-    return moreButtonTemplate();
+    return filtersTemplate();
   }
 
   getElement() {

@@ -1,8 +1,8 @@
-import UserNameView from './view/user-name-view.js';
-import NavigationView from './view/navigation-view.js';
-import FiltersView from './view/filters-view.js';
-import StatisticsView from './view/statistics-view';
-import PopupView from './view/popup-view';
+import UserNameView from './view/user-name-view/user-name-view.js';
+import NavigationView from './view/navigation-view/navigation-view.js';
+import FiltersView from './view/filters-view/filters-view.js';
+import StatisticsView from './view/statistics-view/statistics-view';
+import PopupView from './view/popup-view/popup-view';
 import {render} from './render.js';
 import BoardPresenter from './presenter/board-presenter.js';
 

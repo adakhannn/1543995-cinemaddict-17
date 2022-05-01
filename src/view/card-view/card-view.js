@@ -1,10 +1,9 @@
-import {createElement} from '../render.js';
+import {createElement} from '../../render.js';
+import {cardTemplate} from './card-tpl';
 
-const statisticsTemplate = () => '<p>130 291 movies inside</p>';
-
-export default class StatisticsView {
+export default class CardView {
   getTemplate() {
-    return statisticsTemplate();
+    return cardTemplate();
   }
 
   getElement() {

@@ -1,10 +1,9 @@
-import {createElement} from '../render.js';
+import {createElement} from '../../render.js';
+import {statisticsTemplate} from './statistics-tpl';
 
-const boardTemplate = () => '<section class="films"></section>';
-
-export default class BoardView {
+export default class StatisticsView {
   getTemplate() {
-    return boardTemplate();
+    return statisticsTemplate();
   }
 
   getElement() {

@@ -1,8 +1,8 @@
-import BoardView from '../view/board-view.js';
-import ListView from '../view/list-view.js';
-import ListTitleView from '../view/list-title-view.js';
-import CardView from '../view/card-view.js';
-import MoreButtonView from '../view/more-button-view';
+import BoardView from '../view/board-view/board-view.js';
+import ListView from '../view/list-view/list-view.js';
+import ListTitleView from '../view/list-title-view/list-title-view.js';
+import CardView from '../view/card-view/card-view.js';
+import MoreButtonView from '../view/more-button-view/more-button-view';
 import {render, RenderPosition} from '../render.js';
 
 export default class BoardPresenter {
@@ -11,7 +11,7 @@ export default class BoardPresenter {
   listTitleComponent = new ListTitleView();
   moreButtonComponent = new MoreButtonView();
 
-  init = (boardContainer) => {
+  init (boardContainer) {
     this.boardContainer = boardContainer;
 
     render(this.boardComponent, this.boardContainer);
