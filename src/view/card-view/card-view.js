@@ -1,9 +1,13 @@
-import {createElement} from '../../render.js';
+import {createElement} from '../../render';
 import {cardTemplate} from './card-tpl';
 
 export default class CardView {
+  constructor(film) {
+    this.film = film;
+  }
+
   getTemplate() {
-    return cardTemplate();
+    return cardTemplate(this.film);
   }
 
   getElement() {

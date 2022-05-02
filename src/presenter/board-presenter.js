@@ -1,9 +1,9 @@
-import BoardView from '../view/board-view/board-view.js';
-import ListView from '../view/list-view/list-view.js';
-import ListTitleView from '../view/list-title-view/list-title-view.js';
-import CardView from '../view/card-view/card-view.js';
+import BoardView from '../view/board-view/board-view';
+import ListView from '../view/list-view/list-view';
+import ListTitleView from '../view/list-title-view/list-title-view';
+import CardView from '../view/card-view/card-view';
 import MoreButtonView from '../view/more-button-view/more-button-view';
-import {render, RenderPosition} from '../render.js';
+import {render, RenderPosition} from '../render';
 
 export default class BoardPresenter {
   boardComponent = new BoardView();
@@ -11,15 +11,17 @@ export default class BoardPresenter {
   listTitleComponent = new ListTitleView();
   moreButtonComponent = new MoreButtonView();
 
-  init (boardContainer) {
+  init (boardContainer, FilmModel) {
     this.boardContainer = boardContainer;
+    this.filmModel = FilmModel;
+    this.boardFilms = [...this.filmModel.getFilms()];
 
     render(this.boardComponent, this.boardContainer);
     render(this.listComponent, this.boardComponent.getElement());
     render(this.listTitleComponent, this.listComponent.getElement(), RenderPosition.AFTERBEGIN);
-    for (let i = 0; i < 5; i++) {
-      render(new CardView(), this.listComponent.getElement().querySelector('.films-list__container'));
+    for (let i = 0; i < this.boardFilms.length; i++) {
+      render(new CardView(this.boardFilms[i]), this.listComponent.getElement().querySelector('.films-list__container'));
     }
     render(this.moreButtonComponent, this.boardComponent.getElement().querySelector('.films-list'));
-  };
+  }
 }
