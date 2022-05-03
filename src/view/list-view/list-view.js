@@ -1,10 +1,5 @@
-import {createElement} from '../render.js';
-
-const listTemplate = () => (
-  `<section class="films-list">
-      <div class="films-list__container"></div
-   </section>`
-);
+import {createElement} from '../../render.js';
+import {listTemplate} from './list-tpl';
 
 export default class ListView {
   getTemplate() {

@@ -1,10 +1,9 @@
-import {createElement} from '../render.js';
+import {createElement} from '../../render.js';
+import {filtersTemplate} from './filters-tpl';
 
-const statisticsTemplate = () => '<p>130 291 movies inside</p>';
-
-export default class StatisticsView {
+export default class FiltersView {
   getTemplate() {
-    return statisticsTemplate();
+    return filtersTemplate();
   }
 
   getElement() {

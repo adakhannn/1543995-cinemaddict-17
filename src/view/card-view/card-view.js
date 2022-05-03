@@ -1,10 +1,13 @@
-import {createElement} from '../render.js';
+import {createElement} from '../../render';
+import {cardTemplate} from './card-tpl';
 
-const boardTemplate = () => '<section class="films"></section>';
+export default class CardView {
+  constructor(film) {
+    this.film = film;
+  }
 
-export default class BoardView {
   getTemplate() {
-    return boardTemplate();
+    return cardTemplate(this.film);
   }
 
   getElement() {

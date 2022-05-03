@@ -1,6 +1,5 @@
-import {createElement} from '../render.js';
-
-const listTitleTemplate = () => '<h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>';
+import {createElement} from '../../render.js';
+import {listTitleTemplate} from './list-title-tpl';
 
 export default class ListTitleView {
   getTemplate() {
