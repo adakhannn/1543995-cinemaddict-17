@@ -1,4 +1,4 @@
-import {createElement} from '../../render.js';
+import {createElement} from '../../render';
 import {popupTemplate} from './popup-tpl';
 
 export default class PopupView {

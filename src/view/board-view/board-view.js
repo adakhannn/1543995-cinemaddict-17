@@ -1,4 +1,4 @@
-import {createElement} from '../../render.js';
+import {createElement} from '../../render';
 import {boardTemplate} from './board.tpl';
 
 export default class BoardView {

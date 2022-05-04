@@ -1,4 +1,4 @@
-import {createElement} from '../../render.js';
+import {createElement} from '../../render';
 import {listTemplate} from './list-tpl';
 
 export default class ListView {

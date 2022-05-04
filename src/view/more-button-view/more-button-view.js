@@ -1,4 +1,4 @@
-import {createElement} from '../../render.js';
+import {createElement} from '../../render';
 import {moreButtonTemplate} from './more-button-tpl';
 
 export default class MoreButtonView {

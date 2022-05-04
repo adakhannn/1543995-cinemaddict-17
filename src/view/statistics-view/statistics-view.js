@@ -1,4 +1,4 @@
-import {createElement} from '../../render.js';
+import {createElement} from '../../render';
 import {statisticsTemplate} from './statistics-tpl';
 
 export default class StatisticsView {

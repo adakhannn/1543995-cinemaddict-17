@@ -1,4 +1,4 @@
-import {createElement} from '../../render.js';
+import {createElement} from '../../render';
 import {filtersTemplate} from './filters-tpl';
 
 export default class FiltersView {

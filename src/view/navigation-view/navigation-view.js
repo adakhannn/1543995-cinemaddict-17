@@ -1,4 +1,4 @@
-import {createElement} from '../../render.js';
+import {createElement} from '../../render';
 import {navigationTemplate} from './navigation-tpl';
 
 export default class NavigationView {

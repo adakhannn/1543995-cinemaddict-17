@@ -1,4 +1,4 @@
-import {createElement} from '../../render.js';
+import {createElement} from '../../render';
 import {listTitleTemplate} from './list-title-tpl';
 
 export default class ListTitleView {
