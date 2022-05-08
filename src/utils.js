@@ -26,4 +26,6 @@ function getTimeFromMins(mins, hoursText, minutesText) {
 
 const humanizeDate = (date, format) => dayjs(date).format(format);
 
-export {getRandomInteger, getRandomFloat, generateRandomInfo, humanizeDate, getTimeFromMins};
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+export {getRandomInteger, getRandomFloat, generateRandomInfo, humanizeDate, getTimeFromMins, isEscapeKey};

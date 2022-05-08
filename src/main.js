@@ -5,6 +5,7 @@ import StatisticsView from './view/statistics-view/statistics-view';
 import {render} from './render';
 import BoardPresenter from './presenter/board-presenter';
 import FilmModel from './model/film-model';
+import {generateFilm} from './mock/film';
 
 const body = document.querySelector('body');
 const header = body.querySelector('.header');
@@ -12,7 +13,7 @@ const main = body.querySelector('.main');
 const footer = body.querySelector('.footer');
 const footerStatistics = footer.querySelector('.footer__statistics');
 
-const filmModel = new FilmModel();
+const filmModel = new FilmModel(Array.from({length: 3}, generateFilm));
 const boardPresenter = new BoardPresenter();
 
 render(new UserNameView(), header);

@@ -4,9 +4,9 @@ export const popupTemplate = (film) => {
   const {comments, filmInfo} = film;
   const getGenresHtml = () => {
     const genresHtml = [];
-    for(let i = 0; i < filmInfo.genres.length; i++) {
-      genresHtml.push(`<span class="film-details__genre">${filmInfo.genres[i]}</span>`);
-    }
+    filmInfo.genres.forEach((item) => {
+      genresHtml.push(`<span class="film-details__genre">${item}</span>`);
+    });
     return genresHtml;
   };
   const getCommentsHtml = () => {

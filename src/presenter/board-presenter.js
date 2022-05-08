@@ -5,6 +5,7 @@ import CardView from '../view/card-view/card-view';
 import MoreButtonView from '../view/more-button-view/more-button-view';
 import {render, RenderPosition} from '../render';
 import PopupView from '../view/popup-view/popup-view';
+import {isEscapeKey} from '../utils';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -24,9 +25,9 @@ export default class BoardPresenter {
     render(this.#boardComponent, this.#boardContainer);
     render(this.#listComponent, this.#boardComponent.element);
     render(this.#listTitleComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
-    for (let i = 0; i < this.#boardFilms.length; i++) {
-      this.#renderFilm(this.#boardFilms[i]);
-    }
+    this.#boardFilms.forEach((item) => {
+      this.#renderFilm(item);
+    });
     render(this.#moreButtonComponent, this.#boardComponent.element.querySelector('.films-list'));
   }
 
@@ -40,20 +41,24 @@ export default class BoardPresenter {
     };
 
     const removePopup = () => {
-      this.#boardContainer.removeChild(popupComponent.element);
+      const allPopup = this.#boardContainer.querySelectorAll('.film-details');
+      allPopup.forEach((item) => {
+        this.#boardContainer.removeChild(item);
+      });
       this.#boardContainer.parentElement.classList.remove('hide-overflow');
     };
 
     const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
+      if (isEscapeKey(evt)) {
         evt.preventDefault();
         removePopup();
         document.removeEventListener('keydown', onEscKeyDown);
       }
     };
 
-    cardComponent.element.querySelector('.film-card__comments').addEventListener('click', (evt) => {
+    cardComponent.element.querySelector('.film-card__link').addEventListener('click', (evt) => {
       evt.preventDefault();
+      removePopup();
       addPopup();
       document.addEventListener('keydown', onEscKeyDown);
     });
