@@ -1,43 +1,43 @@
 import {generateCommentInfo} from './comment';
 import {getRandomInteger,getRandomFloat, generateRandomInfo} from '../utils';
 import {
-  titles,
-  alternativeTitles,
-  ageRating,
-  persons,
-  dates,
-  countries,
-  genres,
-  descriptions
-} from '../const';
+  TITLES,
+  ALTERNATIVE_TITLES,
+  AGE_RATING,
+  PERSONS,
+  DATES,
+  COUNTRIES,
+  GENRES,
+  DESCRIPTIONS
+} from './mock-const';
 
 const generateComments = () => Array.from({length: getRandomInteger(0, 100)}, generateCommentInfo);
-const generateRandomPerson = () => generateRandomInfo(persons);
-const generateRandomGenre = () => generateRandomInfo(genres);
-const generateRandomTitle = () => generateRandomInfo(titles);
+const generateRandomPerson = () => generateRandomInfo(PERSONS);
+const generateRandomGenre = () => generateRandomInfo(GENRES);
+const generateRandomTitle = () => generateRandomInfo(TITLES);
 
 export const generateFilm = () => ({
   comments: generateComments(),
   filmInfo: {
     title: generateRandomTitle(),
-    alternativeTitle: generateRandomInfo(alternativeTitles),
+    alternativeTitle: generateRandomInfo(ALTERNATIVE_TITLES),
     totalRating: getRandomFloat(0, 10, 1),
     poster: generateRandomTitle().split(' ').join('-').split('(').join('').split(')').join(''),
-    ageRating: generateRandomInfo(ageRating),
-    director: generateRandomInfo(persons),
+    ageRating: generateRandomInfo(AGE_RATING),
+    director: generateRandomInfo(PERSONS),
     writers: Array.from({length: getRandomInteger(1, 10)}, generateRandomPerson),
     actors: Array.from({length: getRandomInteger(1, 10)}, generateRandomPerson),
     release: {
-      date: generateRandomInfo(dates),
-      releaseCountry: generateRandomInfo(countries),
+      date: generateRandomInfo(DATES),
+      releaseCountry: generateRandomInfo(COUNTRIES),
     },
     runtime: getRandomInteger(1, 180),
     genres: Array.from({length: getRandomInteger(1, 4)}, generateRandomGenre),
-    description: generateRandomInfo(descriptions),
+    description: generateRandomInfo(DESCRIPTIONS),
     userDetails: {
       watchList: Boolean(getRandomInteger(0, 1)),
       alreadyWatched: Boolean(getRandomInteger(0, 1)),
-      watchingDate: generateRandomInfo(dates),
+      watchingDate: generateRandomInfo(DATES),
       favorite: Boolean(getRandomInteger(0, 1)),
     },
   },

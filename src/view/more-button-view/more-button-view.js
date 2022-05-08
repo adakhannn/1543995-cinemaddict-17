@@ -1,20 +1,21 @@
-import {createElement} from '../../render.js';
+import {createElement} from '../../render';
 import {moreButtonTemplate} from './more-button-tpl';
 
 export default class MoreButtonView {
-  getTemplate() {
+  #element = null;
+  get template() {
     return moreButtonTemplate();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

@@ -1,20 +1,21 @@
-import {createElement} from '../../render.js';
+import {createElement} from '../../render';
 import {navigationTemplate} from './navigation-tpl';
 
 export default class NavigationView {
-  getTemplate() {
+  #element = null;
+  get template() {
     return navigationTemplate();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

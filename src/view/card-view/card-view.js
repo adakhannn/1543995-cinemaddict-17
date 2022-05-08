@@ -2,23 +2,25 @@ import {createElement} from '../../render';
 import {cardTemplate} from './card-tpl';
 
 export default class CardView {
+  #element = null;
+  #film = null;
   constructor(film) {
-    this.film = film;
+    this.#film = film;
   }
 
-  getTemplate() {
-    return cardTemplate(this.film);
+  get template() {
+    return cardTemplate(this.#film);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
