@@ -1,6 +1,5 @@
 import UserNameView from './view/user-name-view/user-name-view';
 import NavigationView from './view/navigation-view/navigation-view';
-import FiltersView from './view/filters-view/filters-view';
 import StatisticsView from './view/statistics-view/statistics-view';
 import {render} from './render';
 import BoardPresenter from './presenter/board-presenter';
@@ -13,12 +12,11 @@ const main = body.querySelector('.main');
 const footer = body.querySelector('.footer');
 const footerStatistics = footer.querySelector('.footer__statistics');
 
-const filmModel = new FilmModel(Array.from({length: 3}, generateFilm));
-const boardPresenter = new BoardPresenter();
+const filmModel = new FilmModel(Array.from({length: 22}, generateFilm));
+const boardPresenter = new BoardPresenter(main, filmModel);
 
 render(new UserNameView(), header);
 render(new NavigationView(), main);
-render(new FiltersView(), main);
 render(new StatisticsView(), footerStatistics);
 
-boardPresenter.init(main, filmModel);
+boardPresenter.init();
