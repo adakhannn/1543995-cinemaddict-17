@@ -10,7 +10,7 @@ export const cardTemplate = (film) => {
         <p class="film-card__info">
           <span class="film-card__year">${humanizeDate(filmInfo.release.date, 'YYYY')}</span>
           <span class="film-card__duration">${getTimeFromMins(filmInfo.runtime, 'h', 'm')}</span>
-          <span class="film-card__genre">${filmInfo.genres}</span>
+          <span class="film-card__genre">${filmInfo.genres.join(' ')}</span>
         </p>
         <img src="./images/posters/${filmInfo.poster}.jpg" alt="${filmInfo.title}" class="film-card__poster">
         <p class="film-card__description">${filmInfo.description}</p>

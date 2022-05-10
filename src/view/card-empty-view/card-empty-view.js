@@ -1,10 +1,10 @@
 import {createElement} from '../../render';
-import {filtersTemplate} from './filters-tpl';
+import {cardEmptyTemplate} from './card-empty-tpl';
 
-export default class FiltersView {
+export default class CardEmptyView {
   #element = null;
   get template() {
-    return filtersTemplate();
+    return cardEmptyTemplate();
   }
 
   get element() {
