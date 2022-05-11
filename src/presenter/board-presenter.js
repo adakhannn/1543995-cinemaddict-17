@@ -1,5 +1,5 @@
 import {FILM_COUNT_PER_STEP} from '../const';
-import {render, RenderPosition} from '../render';
+import {render, RenderPosition} from '../framework/render';
 import {isEscapeKey} from '../utils';
 import BoardView from '../view/board-view/board-view';
 import ListView from '../view/list-view/list-view';
@@ -35,8 +35,7 @@ export default class BoardPresenter {
     this.#renderBoard();
   }
 
-  #handleMoreButtonClick = (evt) => {
-    evt.preventDefault();
+  #handleMoreButtonClick = () => {
     this.#boardFilms
       .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
       .forEach((film) => this.#renderFilm(film));
@@ -49,7 +48,7 @@ export default class BoardPresenter {
     }
   };
 
-  #renderFilm = (film) => {
+  #renderFilm(film) {
     const cardComponent = new CardView(film);
     const popupComponent = new PopupView(film);
 
@@ -74,23 +73,21 @@ export default class BoardPresenter {
       }
     };
 
-    cardComponent.element.querySelector('.film-card__link').addEventListener('click', (evt) => {
-      evt.preventDefault();
+    cardComponent.setShowClickHandler(() => {
       removePopup();
       addPopup();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    popupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', (evt) => {
-      evt.preventDefault();
+    popupComponent.setCloseClickHandler(() => {
       removePopup();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
     render(cardComponent, this.#listComponent.element.querySelector('.films-list__container'));
-  };
+  }
 
-  #renderBoard = () => {
+  #renderBoard() {
     render(this.#boardComponent, this.#boardContainer);
     render(this.#listComponent, this.#boardComponent.element);
     if (this.#boardFilms.length === 0) {
@@ -105,7 +102,7 @@ export default class BoardPresenter {
     }
     if (this.#boardFilms.length > FILM_COUNT_PER_STEP) {
       render(this.#moreButtonComponent, this.#boardComponent.element.querySelector('.films-list'));
-      this.#moreButtonComponent.element.addEventListener('click', this.#handleMoreButtonClick);
+      this.#moreButtonComponent.setClickHandler(this.#handleMoreButtonClick);
     }
-  };
+  }
 }

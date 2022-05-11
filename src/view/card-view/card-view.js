@@ -1,10 +1,10 @@
-import {createElement} from '../../render';
+import AbstractView from '../../framework/view/abstract-view';
 import {cardTemplate} from './card-tpl';
 
-export default class CardView {
-  #element = null;
+export default class CardView extends AbstractView {
   #film = null;
   constructor(film) {
+    super();
     this.#film = film;
   }
 
@@ -12,15 +12,13 @@ export default class CardView {
     return cardTemplate(this.#film);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setShowClickHandler = (callback) => {
+    this._callback.showClick = callback;
+    this.element.querySelector('.film-card__link').addEventListener('click', this.#showClickHandler);
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #showClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.showClick();
+  };
 }

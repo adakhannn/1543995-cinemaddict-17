@@ -1,21 +1,8 @@
-import {createElement} from '../../render';
+import AbstractView from '../../framework/view/abstract-view';
 import {boardTemplate} from './board.tpl';
 
-export default class BoardView {
-  #element = null;
+export default class BoardView extends AbstractView {
   get template() {
     return boardTemplate();
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

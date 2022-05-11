@@ -1,21 +1,8 @@
-import {createElement} from '../../render';
+import AbstractView from '../../framework/view/abstract-view';
 import {cardEmptyTemplate} from './card-empty-tpl';
 
-export default class CardEmptyView {
-  #element = null;
+export default class CardEmptyView extends AbstractView {
   get template() {
     return cardEmptyTemplate();
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
