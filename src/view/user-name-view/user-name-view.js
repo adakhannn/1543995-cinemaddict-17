@@ -1,22 +1,8 @@
-import {createElement} from '../../render';
+import AbstractView from '../../framework/view/abstract-view';
 import {userNameTemplate} from './user-name-tpl';
 
-export default class UserNameView {
-  #element = null;
-
+export default class UserNameView extends AbstractView {
   get template() {
     return userNameTemplate();
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

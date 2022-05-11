@@ -1,21 +1,8 @@
-import {createElement} from '../../render';
+import AbstractView from '../../framework/view/abstract-view';
 import {navigationTemplate} from './navigation-tpl';
 
-export default class NavigationView {
-  #element = null;
+export default class NavigationView extends AbstractView {
   get template() {
     return navigationTemplate();
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

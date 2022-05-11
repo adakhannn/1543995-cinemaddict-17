@@ -1,21 +1,18 @@
-import {createElement} from '../../render';
+import AbstractView from '../../framework/view/abstract-view';
 import {moreButtonTemplate} from './more-button-tpl';
 
-export default class MoreButtonView {
-  #element = null;
+export default class MoreButtonView extends AbstractView {
   get template() {
     return moreButtonTemplate();
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.addEventListener('click', this.#clickHandler);
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
 }

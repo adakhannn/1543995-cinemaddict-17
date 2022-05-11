@@ -1,10 +1,10 @@
-import {createElement} from '../../render';
+import AbstractView from '../../framework/view/abstract-view';
 import {popupTemplate} from './popup-tpl';
 
-export default class PopupView {
-  #element = null;
+export default class PopupView extends AbstractView {
   #film = null;
   constructor(film) {
+    super();
     this.#film = film;
   }
 
@@ -12,15 +12,13 @@ export default class PopupView {
     return popupTemplate(this.#film);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
+  setCloseClickHandler(callback) {
+    this._callback.closeClick = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeClickHandler);
   }
 
-  removeElement() {
-    this.#element = null;
+  #closeClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeClick();
   }
 }
