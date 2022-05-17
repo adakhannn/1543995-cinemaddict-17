@@ -1,29 +1,27 @@
 import {FILM_COUNT_PER_STEP} from '../const';
 import {render, RenderPosition} from '../framework/render';
-import {isEscapeKey} from '../utils';
 import BoardView from '../view/board-view/board-view';
 import ListView from '../view/list-view/list-view';
-import ListTitleView from '../view/list-title-view/list-title-view';
-import CardView from '../view/card-view/card-view';
 import MoreButtonView from '../view/more-button-view/more-button-view';
-import PopupView from '../view/popup-view/popup-view';
 import SortView from '../view/filters-view/sort-view';
 import CardEmptyView from '../view/card-empty-view/card-empty-view';
 import ContainerView from '../view/container-view/container-view';
+import FilmPresenter from './film-presenter';
+import {updateItem} from '../utils';
 
 export default class BoardPresenter {
   #boardContainer = null;
   #filmModel = null;
-  #boardFilms = null;
+  #boardFilms = [];
 
   #renderedFilmCount = FILM_COUNT_PER_STEP;
   #boardComponent = new BoardView();
   #sortComponent = new SortView();
   #listComponent = new ListView();
   #containerComponent = new ContainerView();
-  #listTitleComponent = new ListTitleView();
   #moreButtonComponent = new MoreButtonView();
   #cardEmptyComponent = new CardEmptyView();
+  #filmPresenter = new Map();
 
   constructor(boardContainer, filmModel) {
     this.#boardContainer = boardContainer;
@@ -35,10 +33,65 @@ export default class BoardPresenter {
     this.#renderBoard();
   }
 
-  #handleMoreButtonClick = () => {
+  #renderBoard() {
+    this.#renderMainContainer();
+    this.#renderList();
+    if (this.#boardFilms.length === 0) {
+      this.#renderCardEmptyInfo();
+      return;
+    }
+    this.#renderSort();
+    this.#renderContainer();
+  }
+
+  #renderMainContainer() {
+    render(this.#listComponent, this.#boardComponent.element);
+  }
+
+  #renderSort() {
+    render(this.#sortComponent, this.#boardComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderList() {
+    render(this.#boardComponent, this.#boardContainer);
+  }
+
+  #renderCardEmptyInfo() {
+    render(this.#cardEmptyComponent, this.#listComponent.element);
+  }
+
+  #renderMoreButton = () => {
+    render(this.#moreButtonComponent, this.#listComponent.element);
+    this.#moreButtonComponent.setClickHandler(this.#handleMoreButtonClick);
+  };
+
+  #renderContainer() {
+    render(this.#containerComponent, this.#listComponent.element);
+    this.#renderFilms(0, Math.min(this.#boardFilms.length, FILM_COUNT_PER_STEP));
+    if (this.#boardFilms.length > FILM_COUNT_PER_STEP) {
+      this.#renderMoreButton();
+    }
+  }
+
+  #handleFilmChange = (updatedFilm) => {
+    this.#boardFilms = updateItem(this.#boardFilms, updatedFilm);
+    this.#filmPresenter.get(updatedFilm.id).init(updatedFilm);
+  };
+
+  #renderFilm(film) {
+    const filmPresenter = new FilmPresenter(this.#boardContainer, this.#containerComponent.element, this.#handleFilmChange);
+    filmPresenter.init(film);
+    this.#filmPresenter.set(film.id, filmPresenter);
+  }
+
+  #renderFilms(from, to) {
     this.#boardFilms
-      .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
+      .slice(from, to)
       .forEach((film) => this.#renderFilm(film));
+  }
+
+  #handleMoreButtonClick = () => {
+    this.#renderFilms(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP);
 
     this.#renderedFilmCount += FILM_COUNT_PER_STEP;
 
@@ -47,62 +100,4 @@ export default class BoardPresenter {
       this.#moreButtonComponent.removeElement();
     }
   };
-
-  #renderFilm(film) {
-    const cardComponent = new CardView(film);
-    const popupComponent = new PopupView(film);
-
-    const addPopup = () => {
-      render(popupComponent, this.#boardContainer);
-      this.#boardContainer.parentElement.classList.add('hide-overflow');
-    };
-
-    const removePopup = () => {
-      const allPopup = this.#boardContainer.querySelectorAll('.film-details');
-      allPopup.forEach((item) => {
-        this.#boardContainer.removeChild(item);
-      });
-      this.#boardContainer.parentElement.classList.remove('hide-overflow');
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (isEscapeKey(evt)) {
-        evt.preventDefault();
-        removePopup();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-
-    cardComponent.setShowClickHandler(() => {
-      removePopup();
-      addPopup();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    popupComponent.setCloseClickHandler(() => {
-      removePopup();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    render(cardComponent, this.#listComponent.element.querySelector('.films-list__container'));
-  }
-
-  #renderBoard() {
-    render(this.#boardComponent, this.#boardContainer);
-    render(this.#listComponent, this.#boardComponent.element);
-    if (this.#boardFilms.length === 0) {
-      render(this.#cardEmptyComponent, this.#listComponent.element);
-      return;
-    }
-    render(this.#sortComponent, this.#boardComponent.element, RenderPosition.AFTERBEGIN);
-    render(this.#listTitleComponent, this.#listComponent.element);
-    render(this.#containerComponent, this.#listComponent.element);
-    for (let i = 0; i < Math.min(this.#boardFilms.length, FILM_COUNT_PER_STEP); i++) {
-      this.#renderFilm(this.#boardFilms[i]);
-    }
-    if (this.#boardFilms.length > FILM_COUNT_PER_STEP) {
-      render(this.#moreButtonComponent, this.#boardComponent.element.querySelector('.films-list'));
-      this.#moreButtonComponent.setClickHandler(this.#handleMoreButtonClick);
-    }
-  }
 }
