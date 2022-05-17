@@ -10,6 +10,7 @@ import {
   GENRES,
   DESCRIPTIONS
 } from './mock-const';
+import {nanoid} from 'nanoid';
 
 const generateComments = () => Array.from({length: getRandomInteger(0, 100)}, generateCommentInfo);
 const generateRandomPerson = () => generateRandomInfo(PERSONS);
@@ -17,6 +18,7 @@ const generateRandomGenre = () => generateRandomInfo(GENRES);
 const generateRandomTitle = () => generateRandomInfo(TITLES);
 
 export const generateFilm = () => ({
+  id: nanoid(),
   comments: generateComments(),
   filmInfo: {
     title: generateRandomTitle(),
