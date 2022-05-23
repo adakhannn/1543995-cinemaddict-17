@@ -34,6 +34,8 @@ export default class FilmPresenter {
     this.#popupComponent.setPopupWatchListClickHandler(this.#handleWatchListClick);
     this.#popupComponent.setPopupAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
     this.#popupComponent.setPopupFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#popupComponent.setEmojiChangeHandler(this.#handleEmojiChange);
+    this.#popupComponent.setPopupScrollHandler();
 
     if (prevCardComponent === null || prevPopupComponent === null) {
       render(this.#cardComponent, this.#cardsContainer);
@@ -58,8 +60,8 @@ export default class FilmPresenter {
   };
 
   #removePopup = () => {
-    const allPopup = this.#boardContainer.querySelectorAll('.film-details');
-    allPopup.forEach((item) => {
+    const allPopups = this.#boardContainer.querySelectorAll('.film-details');
+    allPopups.forEach((item) => {
       this.#boardContainer.removeChild(item);
     });
     this.#boardContainer.parentElement.classList.remove('hide-overflow');
@@ -96,6 +98,10 @@ export default class FilmPresenter {
 
   #handleFavoriteClick = () => {
     this.#film.filmInfo.userDetails.favorite = !this.#film.filmInfo.userDetails.favorite;
+    this.#changeData(this.#film);
+  };
+
+  #handleEmojiChange = () => {
     this.#changeData(this.#film);
   };
 }
