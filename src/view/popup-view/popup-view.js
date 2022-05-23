@@ -1,20 +1,33 @@
-import AbstractView from '../../framework/view/abstract-view';
+import AbstractStatefulView from '../../framework/view/abstract-view';
 import {popupTemplate} from './popup-tpl';
 
-export default class PopupView extends AbstractView {
-  #film = null;
+export default class PopupView extends AbstractStatefulView {
   constructor(film) {
     super();
-    this.#film = film;
+    this._state = film;
+    if (this._state.scrollPosition) {
+      this.element.scrollTop = this._state.scrollPosition;
+    }
   }
 
   get template() {
-    return popupTemplate(this.#film);
+    return popupTemplate(this._state);
   }
 
   setCloseClickHandler = (callback) => {
     this._callback.closeClick = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeClickHandler);
+  };
+
+  setEmojiChangeHandler = (callback) => {
+    this._callback.emojiChange = callback;
+    this.element.querySelectorAll('.film-details__emoji-item').forEach((item) => {
+      item.addEventListener('change', this.#emojiChangeHandler);
+    });
+  };
+
+  setPopupScrollHandler = () => {
+    this.element.addEventListener('scroll', this.#popupScrollHandler);
   };
 
   setPopupWatchListClickHandler = (callback) => {
@@ -50,5 +63,20 @@ export default class PopupView extends AbstractView {
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
+  };
+
+  #emojiChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.element.querySelectorAll('.film-details__emoji-item').forEach((item) => {
+      if (item.checked) {
+        this._state.checkedEmoji = item.value;
+      }
+    });
+    this._callback.emojiChange();
+  };
+
+  #popupScrollHandler = (evt) => {
+    evt.preventDefault();
+    this._state.scrollPosition = this.element.scrollTop;
   };
 }
