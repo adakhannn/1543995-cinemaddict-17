@@ -57,6 +57,7 @@ export default class FilmPresenter {
   #addPopup = () => {
     render(this.#popupComponent, this.#boardContainer);
     this.#boardContainer.parentElement.classList.add('hide-overflow');
+    this.#changeData(this.#film);
   };
 
   #removePopup = () => {
@@ -71,6 +72,7 @@ export default class FilmPresenter {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.#removePopup();
+      this.#popupComponent.setEscClickHandler();
       document.removeEventListener('keydown', this.#onEscKeyDown);
     }
   };
