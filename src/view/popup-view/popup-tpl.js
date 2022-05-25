@@ -1,4 +1,4 @@
-import {getTimeFromMins, humanizeDate} from '../../utils';
+import {getTimeFromMins, humanizeDate} from '../../utils/common';
 import {EMOTIONS} from '../../mock/mock-const';
 
 export const popupTemplate = (film) => {

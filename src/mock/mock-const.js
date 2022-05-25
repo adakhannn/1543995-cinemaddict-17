@@ -5,6 +5,13 @@ const EMOTIONS = [
   'angry',
 ];
 
+const FILTER_TYPE = {
+  ALL: 'All movies',
+  WATCHLIST: 'Watchlist',
+  HISTORY: 'History',
+  FAVORITES: 'Favorites',
+};
+
 const COMMENTS = [
   'I cant imagine the world without Chris Hemsworth playing Thor',
   'Gonna miss the Hulk in this. His and Thors chemistry was great.',
@@ -79,4 +86,4 @@ const DESCRIPTIONS = [
   'Never has a military defeat looked so victorious as in Christopher Nolan\'s trifecta of interlocking vignettes in this old-school-feeling epic.',
 ];
 
-export {EMOTIONS, COMMENTS, PERSONS, TITLES, ALTERNATIVE_TITLES, AGE_RATING, DATES, COUNTRIES, GENRES, DESCRIPTIONS};
+export {EMOTIONS, COMMENTS, PERSONS, TITLES, ALTERNATIVE_TITLES, AGE_RATING, DATES, COUNTRIES, GENRES, DESCRIPTIONS, FILTER_TYPE};

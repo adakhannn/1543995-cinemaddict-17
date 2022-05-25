@@ -1,5 +1,5 @@
 import {remove, render, replace} from '../framework/render';
-import {isEscapeKey} from '../utils';
+import {isEscapeKey} from '../utils/common';
 import CardView from '../view/card-view/card-view';
 import PopupView from '../view/popup-view/popup-view';
 

@@ -1,13 +1,13 @@
 import {FILM_COUNT_PER_STEP} from '../const';
-import {render, RenderPosition} from '../framework/render';
+import {remove, render, RenderPosition} from '../framework/render';
 import BoardView from '../view/board-view/board-view';
 import ListView from '../view/list-view/list-view';
 import MoreButtonView from '../view/more-button-view/more-button-view';
-import SortView from '../view/filters-view/sort-view';
+import SortView from '../view/sort-view/sort-view';
 import CardEmptyView from '../view/card-empty-view/card-empty-view';
 import ContainerView from '../view/container-view/container-view';
 import FilmPresenter from './film-presenter';
-import {updateItem} from '../utils';
+import {updateItem} from '../utils/common';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -96,8 +96,7 @@ export default class BoardPresenter {
     this.#renderedFilmCount += FILM_COUNT_PER_STEP;
 
     if (this.#renderedFilmCount >= this.#boardFilms.length) {
-      this.#moreButtonComponent.element.remove();
-      this.#moreButtonComponent.removeElement();
+      remove(this.#moreButtonComponent);
     }
   };
 }
