@@ -1,4 +1,4 @@
-import {getTimeFromMins, humanizeDate} from '../../utils';
+import {getTimeFromMins, humanizeDate} from '../../utils/common';
 
 export const cardTemplate = (film) => {
   const {comments, filmInfo} = film;

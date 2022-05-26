@@ -5,9 +5,6 @@ export default class PopupView extends AbstractStatefulView {
   constructor(film) {
     super();
     this._state = film;
-    if (this._state.scrollPosition) {
-      this.element.scrollTop = this._state.scrollPosition;
-    }
   }
 
   get template() {
@@ -17,6 +14,10 @@ export default class PopupView extends AbstractStatefulView {
   setCloseClickHandler = (callback) => {
     this._callback.closeClick = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeClickHandler);
+  };
+
+  setEscClickHandler = () => {
+    delete this._state.checkedEmoji;
   };
 
   setEmojiChangeHandler = (callback) => {
@@ -48,21 +49,25 @@ export default class PopupView extends AbstractStatefulView {
   #closeClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.closeClick();
+    delete this._state.checkedEmoji;
   };
 
   #watchListClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.watchListClick();
+    this.#autoScroll();
   };
 
   #alreadyWatchedClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.alreadyWatchedClick();
+    this.#autoScroll();
   };
 
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
+    this.#autoScroll();
   };
 
   #emojiChangeHandler = (evt) => {
@@ -73,10 +78,15 @@ export default class PopupView extends AbstractStatefulView {
       }
     });
     this._callback.emojiChange();
+    this.#autoScroll();
   };
 
   #popupScrollHandler = (evt) => {
     evt.preventDefault();
     this._state.scrollPosition = this.element.scrollTop;
+  };
+
+  #autoScroll = () => {
+    document.querySelector('.film-details').scrollTo(0,this._state.scrollPosition);
   };
 }

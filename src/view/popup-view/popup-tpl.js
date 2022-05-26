@@ -1,4 +1,5 @@
-import {getTimeFromMins, humanizeDate} from '../../utils';
+import {getTimeFromMins, humanizeDate} from '../../utils/common';
+import {EMOTIONS} from '../../mock/mock-const';
 
 export const popupTemplate = (film) => {
   const {comments, filmInfo, checkedEmoji} = film;
@@ -8,6 +9,18 @@ export const popupTemplate = (film) => {
       genresHtml.push(`<span class="film-details__genre">${item}</span>`);
     });
     return genresHtml;
+  };
+  const getEmotionsHtml = () => {
+    const EmotionsHtml = [];
+    EMOTIONS.forEach((item) => {
+      EmotionsHtml.push(
+        `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${item}" value="${item}" ${checkedEmoji === item ? 'checked' : ''}>
+          <label class="film-details__emoji-label" for="emoji-${item}">
+            <img src="./images/emoji/${item}.png" width="30" height="30" alt="emoji">
+          </label>`
+      );
+    });
+    return EmotionsHtml;
   };
   const getCommentsHtml = () => {
     const commentsHtml = [];
@@ -116,25 +129,7 @@ export const popupTemplate = (film) => {
               </label>
 
               <div class="film-details__emoji-list">
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${checkedEmoji === 'smile' ? 'checked' : ''}>
-                <label class="film-details__emoji-label" for="emoji-smile">
-                  <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${checkedEmoji === 'sleeping' ? 'checked' : ''}>
-                <label class="film-details__emoji-label" for="emoji-sleeping">
-                  <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${checkedEmoji === 'puke' ? 'checked' : ''}>
-                <label class="film-details__emoji-label" for="emoji-puke">
-                  <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-                </label>
-
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${checkedEmoji === 'angry' ? 'checked' : ''}>
-                <label class="film-details__emoji-label" for="emoji-angry">
-                  <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-                </label>
+                ${getEmotionsHtml().join('')}
               </div>
             </div>
           </section>

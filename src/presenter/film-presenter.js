@@ -1,5 +1,5 @@
 import {remove, render, replace} from '../framework/render';
-import {isEscapeKey} from '../utils';
+import {isEscapeKey} from '../utils/common';
 import CardView from '../view/card-view/card-view';
 import PopupView from '../view/popup-view/popup-view';
 
@@ -57,6 +57,7 @@ export default class FilmPresenter {
   #addPopup = () => {
     render(this.#popupComponent, this.#boardContainer);
     this.#boardContainer.parentElement.classList.add('hide-overflow');
+    this.#changeData(this.#film);
   };
 
   #removePopup = () => {
@@ -71,6 +72,7 @@ export default class FilmPresenter {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.#removePopup();
+      this.#popupComponent.setEscClickHandler();
       document.removeEventListener('keydown', this.#onEscKeyDown);
     }
   };

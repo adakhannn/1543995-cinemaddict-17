@@ -1,5 +1,5 @@
 import {generateCommentInfo} from './comment';
-import {getRandomInteger,getRandomFloat, generateRandomInfo} from '../utils';
+import {getRandomInteger,getRandomFloat, generateRandomInfo} from '../utils/common';
 import {
   TITLES,
   ALTERNATIVE_TITLES,
