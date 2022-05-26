@@ -1,5 +1,5 @@
 import {getTimeFromMins, humanizeDate} from '../../utils/common';
-import {EMOTIONS} from '../../mock/mock-const';
+import {EMOTIONS} from '../../const';
 
 export const popupTemplate = (film) => {
   const {comments, filmInfo, checkedEmoji} = film;
@@ -24,23 +24,23 @@ export const popupTemplate = (film) => {
   };
   const getCommentsHtml = () => {
     const commentsHtml = [];
-    for(let i = 0; i < comments.length; i++) {
+    comments.forEach((item) => {
       commentsHtml.push(
         `<li class="film-details__comment">
           <span class="film-details__comment-emoji">
-            <img src="./images/emoji/${comments[i].emotion}.png" width="55" height="55" alt="emoji-${comments[i].emotion}">
+            <img src="./images/emoji/${item.emotion}.png" width="55" height="55" alt="emoji-${item.emotion}">
           </span>
           <div>
-            <p class="film-details__comment-text">${comments[i].comment}</p>
+            <p class="film-details__comment-text">${item.comment}</p>
             <p class="film-details__comment-info">
-              <span class="film-details__comment-author">${comments[i].author}</span>
-              <span class="film-details__comment-day">${humanizeDate(comments[i].date, 'DD/MM/YYYY HH:mm')}</span>
+              <span class="film-details__comment-author">${item.author}</span>
+              <span class="film-details__comment-day">${humanizeDate(item.date, 'DD/MM/YYYY HH:mm')}</span>
               <button class="film-details__comment-delete">Delete</button>
             </p>
           </div>
         </li>`
       );
-    }
+    });
     return commentsHtml;
   };
   return (

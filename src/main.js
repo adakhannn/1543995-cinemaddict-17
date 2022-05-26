@@ -5,7 +5,7 @@ import {render} from './framework/render';
 import BoardPresenter from './presenter/board-presenter';
 import FilmModel from './model/film-model';
 import {generateFilm} from './mock/film';
-import {generateFilter} from './mock/filter';
+import {generateFilter} from './utils/filter';
 
 const body = document.querySelector('body');
 const header = body.querySelector('.header');

@@ -1,5 +1,6 @@
 import {generateRandomInfo} from '../utils/common';
-import {EMOTIONS, COMMENTS, PERSONS, DATES} from './mock-const';
+import {COMMENTS, PERSONS, DATES} from './mock-const';
+import {EMOTIONS} from '../const';
 
 export const generateCommentInfo = () => ({
   author: generateRandomInfo(PERSONS),
