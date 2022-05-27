@@ -54,6 +54,11 @@ export default class FilmPresenter {
     remove(prevPopupComponent);
   }
 
+  destroy = () => {
+    remove(this.#cardComponent);
+    remove(this.#popupComponent);
+  };
+
   #addPopup = () => {
     render(this.#popupComponent, this.#boardContainer);
     this.#boardContainer.parentElement.classList.add('hide-overflow');

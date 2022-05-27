@@ -1,4 +1,4 @@
-import {FILTER_TYPE} from '../mock/mock-const';
+import {FILTER_TYPE} from '../const';
 
 const filter = {
   [FILTER_TYPE.ALL]: (films) => films.filter((film) => film),
@@ -7,4 +7,11 @@ const filter = {
   [FILTER_TYPE.FAVORITES]: (films) => films.filter((film) => film.filmInfo.userDetails.favorite),
 };
 
-export {filter};
+const generateFilter = (films) => Object.entries(filter).map(
+  ([filterName, filterFilms]) => ({
+    name: filterName,
+    count: filterFilms(films).length,
+  }),
+);
+
+export {generateFilter};

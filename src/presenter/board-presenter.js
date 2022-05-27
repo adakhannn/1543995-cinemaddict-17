@@ -1,4 +1,4 @@
-import {FILM_COUNT_PER_STEP} from '../const';
+import {FILM_COUNT_PER_STEP, SORT_TYPE} from '../const';
 import {remove, render, RenderPosition} from '../framework/render';
 import BoardView from '../view/board-view/board-view';
 import ListView from '../view/list-view/list-view';
@@ -8,6 +8,7 @@ import CardEmptyView from '../view/card-empty-view/card-empty-view';
 import ContainerView from '../view/container-view/container-view';
 import FilmPresenter from './film-presenter';
 import {updateItem} from '../utils/common';
+import {sortFilmDateUp, sortFilmRatingUp} from '../utils/sort.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -22,6 +23,8 @@ export default class BoardPresenter {
   #moreButtonComponent = new MoreButtonView();
   #cardEmptyComponent = new CardEmptyView();
   #filmPresenter = new Map();
+  #currentSortType = SORT_TYPE.DEFAULT;
+  #sourcedBoardFilms = [];
 
   constructor(boardContainer, filmModel) {
     this.#boardContainer = boardContainer;
@@ -30,6 +33,7 @@ export default class BoardPresenter {
 
   init () {
     this.#boardFilms = [...this.#filmModel.films];
+    this.#sourcedBoardFilms = [...this.#filmModel.films];
     this.#renderBoard();
   }
 
@@ -48,8 +52,19 @@ export default class BoardPresenter {
     render(this.#listComponent, this.#boardComponent.element);
   }
 
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortFilms(sortType);
+    this.#clearContainer();
+    this.#renderContainer();
+  };
+
   #renderSort() {
     render(this.#sortComponent, this.#boardComponent.element, RenderPosition.AFTERBEGIN);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   }
 
   #renderList() {
@@ -73,11 +88,6 @@ export default class BoardPresenter {
     }
   }
 
-  #handleFilmChange = (updatedFilm) => {
-    this.#boardFilms = updateItem(this.#boardFilms, updatedFilm);
-    this.#filmPresenter.get(updatedFilm.id).init(updatedFilm);
-  };
-
   #renderFilm(film) {
     const filmPresenter = new FilmPresenter(this.#boardContainer, this.#containerComponent.element, this.#handleFilmChange);
     filmPresenter.init(film);
@@ -89,6 +99,34 @@ export default class BoardPresenter {
       .slice(from, to)
       .forEach((film) => this.#renderFilm(film));
   }
+
+  #handleFilmChange = (updatedFilm) => {
+    this.#boardFilms = updateItem(this.#boardFilms, updatedFilm);
+    this.#sourcedBoardFilms = updateItem(this.#sourcedBoardFilms, updatedFilm);
+    this.#filmPresenter.get(updatedFilm.id).init(updatedFilm);
+  };
+
+  #sortFilms = (sortType) => {
+    switch (sortType) {
+      case SORT_TYPE.DATE:
+        this.#boardFilms.sort(sortFilmDateUp);
+        break;
+      case SORT_TYPE.RATING:
+        this.#boardFilms.sort(sortFilmRatingUp);
+        break;
+      default:
+        this.#boardFilms = [...this.#sourcedBoardFilms];
+    }
+
+    this.#currentSortType = sortType;
+  };
+
+  #clearContainer = () => {
+    this.#filmPresenter.forEach((presenter) => presenter.destroy());
+    this.#filmPresenter.clear();
+    this.#renderedFilmCount = FILM_COUNT_PER_STEP;
+    remove(this.#moreButtonComponent);
+  };
 
   #handleMoreButtonClick = () => {
     this.#renderFilms(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP);
