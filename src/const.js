@@ -7,6 +7,12 @@ const FILTER_TYPE = {
   FAVORITES: 'Favorites',
 };
 
+const SORT_TYPE = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating',
+};
+
 const EMOTIONS = [
   'smile',
   'sleeping',
@@ -14,4 +20,4 @@ const EMOTIONS = [
   'angry',
 ];
 
-export {FILM_COUNT_PER_STEP, FILTER_TYPE, EMOTIONS};
+export {FILM_COUNT_PER_STEP, FILTER_TYPE, EMOTIONS, SORT_TYPE};
