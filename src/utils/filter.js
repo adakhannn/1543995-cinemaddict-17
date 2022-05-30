@@ -1,4 +1,4 @@
-import {FILTER_TYPE} from '../const';
+import {FILTER_TYPE} from '../consts';
 
 const filter = {
   [FILTER_TYPE.ALL]: (films) => films.filter((film) => film),

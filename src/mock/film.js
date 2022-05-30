@@ -9,7 +9,7 @@ import {
   COUNTRIES,
   GENRES,
   DESCRIPTIONS
-} from './mock-const';
+} from './mock-consts';
 import {nanoid} from 'nanoid';
 
 const generateComments = () => Array.from({length: getRandomInteger(0, 100)}, generateCommentInfo);

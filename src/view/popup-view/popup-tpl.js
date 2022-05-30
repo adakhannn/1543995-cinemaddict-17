@@ -1,5 +1,5 @@
 import {getTimeFromMins, humanizeDate} from '../../utils/common';
-import {EMOTIONS} from '../../const';
+import {EMOTIONS} from '../../consts';
 
 export const popupTemplate = (film) => {
   const {comments, filmInfo, checkedEmoji} = film;

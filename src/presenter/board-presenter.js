@@ -1,4 +1,4 @@
-import {FILM_COUNT_PER_STEP, SORT_TYPE} from '../const';
+import {FILM_COUNT_PER_STEP, SORT_TYPE} from '../consts';
 import {remove, render, RenderPosition} from '../framework/render';
 import BoardView from '../view/board-view/board-view';
 import ListView from '../view/list-view/list-view';
@@ -8,7 +8,7 @@ import CardEmptyView from '../view/card-empty-view/card-empty-view';
 import ContainerView from '../view/container-view/container-view';
 import FilmPresenter from './film-presenter';
 import {updateItem} from '../utils/common';
-import {sortFilmDateUp, sortFilmRatingUp} from '../utils/sort.js';
+import {sortFilmDate, sortFilmRating} from '../utils/sort.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -109,10 +109,10 @@ export default class BoardPresenter {
   #sortFilms = (sortType) => {
     switch (sortType) {
       case SORT_TYPE.DATE:
-        this.#boardFilms.sort(sortFilmDateUp);
+        this.#boardFilms.sort(sortFilmDate);
         break;
       case SORT_TYPE.RATING:
-        this.#boardFilms.sort(sortFilmRatingUp);
+        this.#boardFilms.sort(sortFilmRating);
         break;
       default:
         this.#boardFilms = [...this.#sourcedBoardFilms];

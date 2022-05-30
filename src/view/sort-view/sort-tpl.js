@@ -1,4 +1,4 @@
-import {SORT_TYPE} from '../../const';
+import {SORT_TYPE} from '../../consts';
 
 export const filtersTemplate = () => (
   `<ul class="sort">

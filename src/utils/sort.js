@@ -16,16 +16,16 @@ const getWeightForNullData = (dataA, dataB) => {
   return null;
 };
 
-const sortFilmDateUp = (filmA, filmB) => {
+const sortFilmDate = (filmA, filmB) => {
   const weight = getWeightForNullData(filmA.filmInfo.release.date, filmB.filmInfo.release.date);
 
-  return weight ?? dayjs(filmA.filmInfo.release.date).diff(dayjs(filmB.filmInfo.release.date));
+  return weight ?? dayjs(filmB.filmInfo.release.date).diff(dayjs(filmA.filmInfo.release.date));
 };
 
-const sortFilmRatingUp = (filmA, filmB) => {
+const sortFilmRating = (filmA, filmB) => {
   const weight = getWeightForNullData(filmA.filmInfo.totalRating, filmB.filmInfo.totalRating);
 
-  return weight ?? filmA.filmInfo.totalRating - filmB.filmInfo.totalRating;
+  return weight ?? filmB.filmInfo.totalRating - filmA.filmInfo.totalRating;
 };
 
-export {sortFilmDateUp, sortFilmRatingUp};
+export {sortFilmDate, sortFilmRating};
