@@ -21,9 +21,9 @@ const EMOTIONS = [
 ];
 
 const USER_ACTION = {
-  UPDATE_FILM: 'UPDATE_FILM',
-  ADD_FILM: 'ADD_FILM',
-  DELETE_FILM: 'DELETE_FILM',
+  UPDATE: 'UPDATE',
+  ADD: 'ADD',
+  DELETE: 'DELETE',
 };
 
 const UPDATE_TYPE = {

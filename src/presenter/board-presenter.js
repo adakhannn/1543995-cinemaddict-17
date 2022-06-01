@@ -78,13 +78,13 @@ export default class BoardPresenter {
 
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
-      case USER_ACTION.UPDATE_FILM:
+      case USER_ACTION.UPDATE:
         this.#filmsModel.updateFilm(updateType, update);
         break;
-      case USER_ACTION.ADD_FILM:
+      case USER_ACTION.ADD:
         this.#filmsModel.addFilm(updateType, update);
         break;
-      case USER_ACTION.DELETE_FILM:
+      case USER_ACTION.DELETE:
         this.#filmsModel.deleteFilm(updateType, update);
         break;
     }

@@ -3,6 +3,7 @@ import {isEscapeKey} from '../utils/common';
 import CardView from '../view/card-view/card-view';
 import PopupView from '../view/popup-view/popup-view';
 import {USER_ACTION, UPDATE_TYPE} from '../consts.js';
+import CommentPresenter from './comment-presenter';
 
 export default class FilmPresenter {
   #boardContainer = null;
@@ -11,6 +12,8 @@ export default class FilmPresenter {
   #cardComponent = null;
   #popupComponent = null;
   #film = null;
+
+  #commentPresenter = new Map();
 
   constructor(boardContainer, cardsContainer, changeData) {
     this.#boardContainer = boardContainer;
@@ -37,7 +40,6 @@ export default class FilmPresenter {
     this.#popupComponent.setPopupFavoriteClickHandler(this.#handleFavoriteClick);
     this.#popupComponent.setEmojiChangeHandler(this.#handleEmojiChange);
     this.#popupComponent.setPopupScrollHandler();
-    this.#popupComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevCardComponent === null || prevPopupComponent === null) {
       render(this.#cardComponent, this.#cardsContainer);
@@ -54,6 +56,7 @@ export default class FilmPresenter {
 
     remove(prevCardComponent);
     remove(prevPopupComponent);
+    this.#renderComments(this.#film.comments);
   }
 
   destroy = () => {
@@ -61,10 +64,22 @@ export default class FilmPresenter {
     remove(this.#popupComponent);
   };
 
+  #renderComment(comment) {
+    const commentPresenter = new CommentPresenter(this.#popupComponent.element.querySelector('.film-details__comments-list'), this.#changeData);
+    commentPresenter.init(comment, this.#film);
+  }
+
+  #renderComments(comments) {
+    comments.forEach((comment) => this.#renderComment(comment));
+  }
+
+  #destroyComments() {
+    this.#commentPresenter.forEach((presenter) => presenter.destroy());
+  }
+
   #addPopup = () => {
     render(this.#popupComponent, this.#boardContainer);
     this.#boardContainer.parentElement.classList.add('hide-overflow');
-    this.#changeData(this.#film);
   };
 
   #removePopup = () => {
@@ -87,38 +102,35 @@ export default class FilmPresenter {
   #handleAddPopup = () => {
     this.#removePopup();
     this.#addPopup();
+    this.#renderComments(this.#film.comments);
     document.addEventListener('keydown', this.#onEscKeyDown);
   };
 
   #handleRemovePopup = () => {
+    this.#destroyComments();
     this.#removePopup();
     document.removeEventListener('keydown', this.#onEscKeyDown);
   };
 
   #handleWatchListClick = () => {
     this.#film.filmInfo.userDetails.watchList = !this.#film.filmInfo.userDetails.watchList;
-    this.#changeData(USER_ACTION.UPDATE_FILM, UPDATE_TYPE.MINOR, this.#film);
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.MINOR, this.#film);
     this.#removePopup();
   };
 
   #handleAlreadyWatchedClick = () => {
     this.#film.filmInfo.userDetails.alreadyWatched = !this.#film.filmInfo.userDetails.alreadyWatched;
-    this.#changeData(USER_ACTION.UPDATE_FILM, UPDATE_TYPE.MINOR, this.#film);
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.MINOR, this.#film);
     this.#removePopup();
   };
 
   #handleFavoriteClick = () => {
     this.#film.filmInfo.userDetails.favorite = !this.#film.filmInfo.userDetails.favorite;
-    this.#changeData(USER_ACTION.UPDATE_FILM, UPDATE_TYPE.MINOR, this.#film);
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.MINOR, this.#film);
     this.#removePopup();
   };
 
   #handleEmojiChange = () => {
-    this.#changeData(USER_ACTION.UPDATE_FILM, UPDATE_TYPE.PATCH, this.#film);
-  };
-
-  #handleDeleteClick = () => {
-    this.#film.filmInfo.userDetails.favorite = !this.#film.filmInfo.userDetails.favorite;
-    this.#changeData(USER_ACTION.UPDATE_FILM, UPDATE_TYPE.PATCH, this.#film);
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
   };
 }
