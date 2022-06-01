@@ -1,4 +1,4 @@
-import {generateCommentInfo} from './comment';
+import {generateComment} from './comments';
 import {getRandomInteger,getRandomFloat, generateRandomInfo} from '../utils/common';
 import {
   TITLES,
@@ -12,7 +12,7 @@ import {
 } from './mock-consts';
 import {nanoid} from 'nanoid';
 
-const generateComments = () => Array.from({length: getRandomInteger(0, 100)}, generateCommentInfo);
+const generateComments = () => Array.from({length: getRandomInteger(0, 100)}, generateComment);
 const generateRandomPerson = () => generateRandomInfo(PERSONS);
 const generateRandomGenre = () => generateRandomInfo(GENRES);
 const generateRandomTitle = () => generateRandomInfo(TITLES);

@@ -24,22 +24,8 @@ function getTimeFromMins(mins, hoursText, minutesText) {
   return `${hours}${hoursText} ${minutes}${minutesText}`;
 }
 
-const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1),
-  ];
-};
-
 const humanizeDate = (date, format) => dayjs(date).format(format);
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export {getRandomInteger, getRandomFloat, generateRandomInfo, humanizeDate, getTimeFromMins, isEscapeKey, updateItem};
+export {getRandomInteger, getRandomFloat, generateRandomInfo, humanizeDate, getTimeFromMins, isEscapeKey};

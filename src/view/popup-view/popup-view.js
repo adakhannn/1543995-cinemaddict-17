@@ -46,6 +46,13 @@ export default class PopupView extends AbstractStatefulView {
     this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#favoriteClickHandler);
   };
 
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelectorAll('.film-details__comment-delete').forEach((item) => {
+      item.addEventListener('change', this.#formDeleteClickHandler);
+    });
+  };
+
   #closeClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.closeClick();
@@ -55,19 +62,16 @@ export default class PopupView extends AbstractStatefulView {
   #watchListClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.watchListClick();
-    this.#autoScroll();
   };
 
   #alreadyWatchedClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.alreadyWatchedClick();
-    this.#autoScroll();
   };
 
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
-    this.#autoScroll();
   };
 
   #emojiChangeHandler = (evt) => {
@@ -86,7 +90,21 @@ export default class PopupView extends AbstractStatefulView {
     this._state.scrollPosition = this.element.scrollTop;
   };
 
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick();
+  };
+
   #autoScroll = () => {
     document.querySelector('.film-details').scrollTo(0,this._state.scrollPosition);
+  };
+
+  _restoreHandlers = () => {
+    this.setCloseClickHandler(this._callback.closeClick);
+    this.setEmojiChangeHandler(this._callback.emojiChange);
+    this.setPopupWatchListClickHandler(this._callback.watchListClick);
+    this.setPopupFavoriteClickHandler(this._callback.favoriteClick);
+    this.setPopupAlreadyWatchedClickHandler(this._callback.alreadyWatchedClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   };
 }

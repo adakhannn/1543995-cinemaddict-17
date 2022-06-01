@@ -2,6 +2,7 @@ import {remove, render, replace} from '../framework/render';
 import {isEscapeKey} from '../utils/common';
 import CardView from '../view/card-view/card-view';
 import PopupView from '../view/popup-view/popup-view';
+import {USER_ACTION, UPDATE_TYPE} from '../consts.js';
 
 export default class FilmPresenter {
   #boardContainer = null;
@@ -36,6 +37,7 @@ export default class FilmPresenter {
     this.#popupComponent.setPopupFavoriteClickHandler(this.#handleFavoriteClick);
     this.#popupComponent.setEmojiChangeHandler(this.#handleEmojiChange);
     this.#popupComponent.setPopupScrollHandler();
+    this.#popupComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevCardComponent === null || prevPopupComponent === null) {
       render(this.#cardComponent, this.#cardsContainer);
@@ -95,20 +97,28 @@ export default class FilmPresenter {
 
   #handleWatchListClick = () => {
     this.#film.filmInfo.userDetails.watchList = !this.#film.filmInfo.userDetails.watchList;
-    this.#changeData(this.#film);
+    this.#changeData(USER_ACTION.UPDATE_FILM, UPDATE_TYPE.MINOR, this.#film);
+    this.#removePopup();
   };
 
   #handleAlreadyWatchedClick = () => {
     this.#film.filmInfo.userDetails.alreadyWatched = !this.#film.filmInfo.userDetails.alreadyWatched;
-    this.#changeData(this.#film);
+    this.#changeData(USER_ACTION.UPDATE_FILM, UPDATE_TYPE.MINOR, this.#film);
+    this.#removePopup();
   };
 
   #handleFavoriteClick = () => {
     this.#film.filmInfo.userDetails.favorite = !this.#film.filmInfo.userDetails.favorite;
-    this.#changeData(this.#film);
+    this.#changeData(USER_ACTION.UPDATE_FILM, UPDATE_TYPE.MINOR, this.#film);
+    this.#removePopup();
   };
 
   #handleEmojiChange = () => {
-    this.#changeData(this.#film);
+    this.#changeData(USER_ACTION.UPDATE_FILM, UPDATE_TYPE.PATCH, this.#film);
+  };
+
+  #handleDeleteClick = () => {
+    this.#film.filmInfo.userDetails.favorite = !this.#film.filmInfo.userDetails.favorite;
+    this.#changeData(USER_ACTION.UPDATE_FILM, UPDATE_TYPE.PATCH, this.#film);
   };
 }
