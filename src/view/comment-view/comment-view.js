@@ -21,4 +21,8 @@ export default class CommentView extends AbstractStatefulView {
     evt.preventDefault();
     this._callback.deleteClick();
   };
+
+  _restoreHandlers = () => {
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  };
 }

@@ -1,4 +1,4 @@
-import {remove, render} from '../framework/render';
+import {render} from '../framework/render';
 import CommentView from '../view/comment-view/comment-view';
 import {UPDATE_TYPE, USER_ACTION} from '../consts';
 
@@ -21,10 +21,6 @@ export default class CommentPresenter {
     this.#commentComponent.setDeleteClickHandler(this.#handleDeleteClick);
     render(this.#commentComponent, this.#commentsContainer);
   }
-
-  destroy = () => {
-    remove(this.#commentComponent);
-  };
 
   #handleDeleteClick = () => {
     const index = this.#film.comments.findIndex((comment) => comment.id === this.#comment.id);

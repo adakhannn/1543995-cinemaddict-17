@@ -13,8 +13,6 @@ export default class FilmPresenter {
   #popupComponent = null;
   #film = null;
 
-  #commentPresenter = new Map();
-
   constructor(boardContainer, cardsContainer, changeData) {
     this.#boardContainer = boardContainer;
     this.#cardsContainer = cardsContainer;
@@ -39,6 +37,7 @@ export default class FilmPresenter {
     this.#popupComponent.setPopupAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
     this.#popupComponent.setPopupFavoriteClickHandler(this.#handleFavoriteClick);
     this.#popupComponent.setEmojiChangeHandler(this.#handleEmojiChange);
+    this.#popupComponent.setTextareaChangeHandler();
     this.#popupComponent.setPopupScrollHandler();
 
     if (prevCardComponent === null || prevPopupComponent === null) {
@@ -73,10 +72,6 @@ export default class FilmPresenter {
     comments.forEach((comment) => this.#renderComment(comment));
   }
 
-  #destroyComments() {
-    this.#commentPresenter.forEach((presenter) => presenter.destroy());
-  }
-
   #addPopup = () => {
     render(this.#popupComponent, this.#boardContainer);
     this.#boardContainer.parentElement.classList.add('hide-overflow');
@@ -103,11 +98,12 @@ export default class FilmPresenter {
     this.#removePopup();
     this.#addPopup();
     this.#renderComments(this.#film.comments);
+    this.#popupComponent.setFormSubmitHandler(this.#handleFormSubmit);
     document.addEventListener('keydown', this.#onEscKeyDown);
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
   };
 
   #handleRemovePopup = () => {
-    this.#destroyComments();
     this.#removePopup();
     document.removeEventListener('keydown', this.#onEscKeyDown);
   };
@@ -132,5 +128,9 @@ export default class FilmPresenter {
 
   #handleEmojiChange = () => {
     this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
+  };
+
+  #handleFormSubmit = (film) => {
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, film);
   };
 }

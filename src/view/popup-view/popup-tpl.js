@@ -1,8 +1,9 @@
+import he from 'he';
 import {getTimeFromMins, humanizeDate} from '../../utils/common';
 import {EMOTIONS} from '../../consts';
 
 export const popupTemplate = (film) => {
-  const {comments, filmInfo, checkedEmoji} = film;
+  const {comments, filmInfo, checkedEmoji, newComment} = film;
   const getGenresHtml = () => {
     const genresHtml = [];
     filmInfo.genres.forEach((item) => {
@@ -102,7 +103,7 @@ export const popupTemplate = (film) => {
               <div class="film-details__add-emoji-label">${checkedEmoji ? `<img src="./images/emoji/${checkedEmoji}.png" width="70" height="70" alt="${checkedEmoji}">` : ''}</div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+                <textarea class="film-details__comment-input" placeholder="${newComment ? '' : 'Select reaction below and write comment here'}" name="comment" >${newComment ? `${he.encode(newComment)}` : ''}</textarea>
               </label>
 
               <div class="film-details__emoji-list">

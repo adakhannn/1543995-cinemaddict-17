@@ -1,5 +1,9 @@
 import AbstractStatefulView from '../../framework/view/abstract-view';
 import {popupTemplate} from './popup-tpl';
+import {generateRandomInfo, isEnterKey} from '../../utils/common';
+import {nanoid} from 'nanoid';
+import {PERSONS} from '../../mock/mock-consts';
+import dayjs from 'dayjs';
 
 export default class PopupView extends AbstractStatefulView {
   constructor(film) {
@@ -10,6 +14,21 @@ export default class PopupView extends AbstractStatefulView {
   get template() {
     return popupTemplate(this._state);
   }
+
+  static parseStateToFilm = (state) => {
+    state.comments.push({
+      id: nanoid(),
+      author: generateRandomInfo(PERSONS),
+      comment: state.newComment,
+      date: dayjs(),
+      emotion: state.checkedEmoji,
+    });
+
+    delete state.checkedEmoji;
+    delete state.newComment;
+
+    return state;
+  };
 
   setCloseClickHandler = (callback) => {
     this._callback.closeClick = callback;
@@ -46,10 +65,20 @@ export default class PopupView extends AbstractStatefulView {
     this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#favoriteClickHandler);
   };
 
+  setTextareaChangeHandler = () => {
+    this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#textareaChangeHandler);
+  };
+
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    document.addEventListener('keydown', this.#formSubmitHandler);
+  };
+
   #closeClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.closeClick();
     delete this._state.checkedEmoji;
+    delete this._state.newComment;
   };
 
   #watchListClickHandler = (evt) => {
@@ -83,8 +112,20 @@ export default class PopupView extends AbstractStatefulView {
     this._state.scrollPosition = this.element.scrollTop;
   };
 
+  #textareaChangeHandler = (evt) => {
+    evt.preventDefault();
+    this._state.newComment = evt.target.value;
+  };
+
   #autoScroll = () => {
     document.querySelector('.film-details').scrollTo(0,this._state.scrollPosition);
+  };
+
+  #formSubmitHandler = (evt) => {
+    if(evt.ctrlKey && isEnterKey(evt)) {
+      evt.preventDefault();
+      this._callback.formSubmit(PopupView.parseStateToFilm(this._state));
+    }
   };
 
   _restoreHandlers = () => {
@@ -93,5 +134,8 @@ export default class PopupView extends AbstractStatefulView {
     this.setPopupWatchListClickHandler(this._callback.watchListClick);
     this.setPopupFavoriteClickHandler(this._callback.favoriteClick);
     this.setPopupAlreadyWatchedClickHandler(this._callback.alreadyWatchedClick);
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setTextareaChangeHandler();
+    this.setPopupScrollHandler();
   };
 }

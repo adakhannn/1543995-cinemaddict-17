@@ -28,4 +28,6 @@ const humanizeDate = (date, format) => dayjs(date).format(format);
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export {getRandomInteger, getRandomFloat, generateRandomInfo, humanizeDate, getTimeFromMins, isEscapeKey};
+const isEnterKey = (evt) => evt.keyCode === 13;
+
+export {getRandomInteger, getRandomFloat, generateRandomInfo, humanizeDate, getTimeFromMins, isEscapeKey, isEnterKey};
