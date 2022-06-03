@@ -110,20 +110,17 @@ export default class FilmPresenter {
 
   #handleWatchListClick = () => {
     this.#film.filmInfo.userDetails.watchList = !this.#film.filmInfo.userDetails.watchList;
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.MINOR, this.#film);
-    this.#removePopup();
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
   };
 
   #handleAlreadyWatchedClick = () => {
     this.#film.filmInfo.userDetails.alreadyWatched = !this.#film.filmInfo.userDetails.alreadyWatched;
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.MINOR, this.#film);
-    this.#removePopup();
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
   };
 
   #handleFavoriteClick = () => {
     this.#film.filmInfo.userDetails.favorite = !this.#film.filmInfo.userDetails.favorite;
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.MINOR, this.#film);
-    this.#removePopup();
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
   };
 
   #handleEmojiChange = () => {
