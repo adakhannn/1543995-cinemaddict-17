@@ -1,7 +1,7 @@
-import AbstractView from '../../framework/view/abstract-view';
 import {moreButtonTemplate} from './more-button-tpl';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 
-export default class MoreButtonView extends AbstractView {
+export default class MoreButtonView extends AbstractStatefulView {
   get template() {
     return moreButtonTemplate();
   }
@@ -14,5 +14,9 @@ export default class MoreButtonView extends AbstractView {
   #clickHandler = (evt) => {
     evt.preventDefault();
     this._callback.click();
+  };
+
+  _restoreHandlers = () => {
+    this.setClickHandler(this._callback.click);
   };
 }

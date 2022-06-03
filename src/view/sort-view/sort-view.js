@@ -1,9 +1,16 @@
-import AbstractView from '../../framework/view/abstract-view';
 import {filtersTemplate} from './sort-tpl';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 
-export default class SortView extends AbstractView {
+export default class SortView extends AbstractStatefulView {
+  #currentSortType = null;
+
+  constructor(currentSortType) {
+    super();
+    this.#currentSortType = currentSortType;
+  }
+
   get template() {
-    return filtersTemplate();
+    return filtersTemplate(this.#currentSortType);
   }
 
   setSortTypeChangeHandler = (callback) => {
@@ -22,5 +29,9 @@ export default class SortView extends AbstractView {
     });
     evt.target.classList.add('sort__button--active');
     this._callback.sortTypeChange(evt.target.dataset.sortType);
+  };
+
+  _restoreHandlers = () => {
+    this.setSortTypeChangeHandler(this._callback.sortTypeChange);
   };
 }

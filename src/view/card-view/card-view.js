@@ -1,7 +1,7 @@
-import AbstractView from '../../framework/view/abstract-view';
 import {cardTemplate} from './card-tpl';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 
-export default class CardView extends AbstractView {
+export default class CardView extends AbstractStatefulView {
   #film = null;
   constructor(film) {
     super();
@@ -50,5 +50,12 @@ export default class CardView extends AbstractView {
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
+  };
+
+  _restoreHandlers = () => {
+    this.setShowClickHandler(this._callback.showClick);
+    this.setCardWatchListClickHandler(this._callback.watchListClick);
+    this.setCardAlreadyWatchedClickHandler(this._callback.alreadyWatchedClick);
+    this.setCardFavoriteClickHandler(this._callback.favoriteClick);
   };
 }

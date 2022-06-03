@@ -1,8 +1,10 @@
 import {generateRandomInfo} from '../utils/common';
-import {COMMENTS, PERSONS, DATES} from './mock-const';
-import {EMOTIONS} from '../const';
+import {COMMENTS, PERSONS, DATES} from './mock-consts';
+import {EMOTIONS} from '../consts';
+import {nanoid} from 'nanoid';
 
-export const generateCommentInfo = () => ({
+export const generateComment = () => ({
+  id: nanoid(),
   author: generateRandomInfo(PERSONS),
   comment: generateRandomInfo(COMMENTS),
   date: generateRandomInfo(DATES),

@@ -1,1 +1,10 @@
-export const cardEmptyTemplate = () => '<h2 class="films-list__title">There are no movies in our database</h2>';
+import {NO_FILMS_TEXTS} from '../../consts';
+
+export const cardEmptyTemplate = (filterType) => {
+  const noFilmsTextValue = NO_FILMS_TEXTS[filterType];
+
+  return (
+    `<h2 class="films-list__title">
+      ${noFilmsTextValue}
+    </h2>`);
+};

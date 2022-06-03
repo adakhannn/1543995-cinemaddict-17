@@ -1,15 +1,31 @@
-import AbstractView from '../../framework/view/abstract-view';
 import {filtersTemplate} from './filters-tpl';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 
-export default class FiltersView extends AbstractView {
+export default class FiltersView extends AbstractStatefulView {
   #filters = null;
+  #currentFilter = null;
 
-  constructor(filters) {
+  constructor(filters, currentFilterType) {
     super();
     this.#filters = filters;
+    this.#currentFilter = currentFilterType;
   }
 
   get template() {
-    return filtersTemplate(this.#filters);
+    return filtersTemplate(this.#filters, this.#currentFilter);
   }
+
+  setFilterTypeChangeHandler = (callback) => {
+    this._callback.filterTypeChange = callback;
+    this.element.addEventListener('click', this.#filterTypeChangeHandler);
+  };
+
+  #filterTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.filterTypeChange(evt.target.dataset.filterType);
+  };
+
+  _restoreHandlers = () => {
+    this.setFilterTypeChangeHandler(this._callback.filterTypeChange);
+  };
 }

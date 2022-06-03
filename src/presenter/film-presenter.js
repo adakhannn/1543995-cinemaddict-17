@@ -2,6 +2,8 @@ import {remove, render, replace} from '../framework/render';
 import {isEscapeKey} from '../utils/common';
 import CardView from '../view/card-view/card-view';
 import PopupView from '../view/popup-view/popup-view';
+import {USER_ACTION, UPDATE_TYPE} from '../consts.js';
+import CommentPresenter from './comment-presenter';
 
 export default class FilmPresenter {
   #boardContainer = null;
@@ -35,6 +37,7 @@ export default class FilmPresenter {
     this.#popupComponent.setPopupAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
     this.#popupComponent.setPopupFavoriteClickHandler(this.#handleFavoriteClick);
     this.#popupComponent.setEmojiChangeHandler(this.#handleEmojiChange);
+    this.#popupComponent.setTextareaChangeHandler();
     this.#popupComponent.setPopupScrollHandler();
 
     if (prevCardComponent === null || prevPopupComponent === null) {
@@ -52,6 +55,7 @@ export default class FilmPresenter {
 
     remove(prevCardComponent);
     remove(prevPopupComponent);
+    this.#renderComments(this.#film.comments);
   }
 
   destroy = () => {
@@ -59,10 +63,18 @@ export default class FilmPresenter {
     remove(this.#popupComponent);
   };
 
+  #renderComment(comment) {
+    const commentPresenter = new CommentPresenter(this.#popupComponent.element.querySelector('.film-details__comments-list'), this.#changeData);
+    commentPresenter.init(comment, this.#film);
+  }
+
+  #renderComments(comments) {
+    comments.forEach((comment) => this.#renderComment(comment));
+  }
+
   #addPopup = () => {
     render(this.#popupComponent, this.#boardContainer);
     this.#boardContainer.parentElement.classList.add('hide-overflow');
-    this.#changeData(this.#film);
   };
 
   #removePopup = () => {
@@ -85,7 +97,10 @@ export default class FilmPresenter {
   #handleAddPopup = () => {
     this.#removePopup();
     this.#addPopup();
+    this.#renderComments(this.#film.comments);
+    this.#popupComponent.setFormSubmitHandler(this.#handleFormSubmit);
     document.addEventListener('keydown', this.#onEscKeyDown);
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
   };
 
   #handleRemovePopup = () => {
@@ -95,20 +110,27 @@ export default class FilmPresenter {
 
   #handleWatchListClick = () => {
     this.#film.filmInfo.userDetails.watchList = !this.#film.filmInfo.userDetails.watchList;
-    this.#changeData(this.#film);
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.MINOR, this.#film);
+    this.#removePopup();
   };
 
   #handleAlreadyWatchedClick = () => {
     this.#film.filmInfo.userDetails.alreadyWatched = !this.#film.filmInfo.userDetails.alreadyWatched;
-    this.#changeData(this.#film);
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.MINOR, this.#film);
+    this.#removePopup();
   };
 
   #handleFavoriteClick = () => {
     this.#film.filmInfo.userDetails.favorite = !this.#film.filmInfo.userDetails.favorite;
-    this.#changeData(this.#film);
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.MINOR, this.#film);
+    this.#removePopup();
   };
 
   #handleEmojiChange = () => {
-    this.#changeData(this.#film);
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
+  };
+
+  #handleFormSubmit = (film) => {
+    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, film);
   };
 }
