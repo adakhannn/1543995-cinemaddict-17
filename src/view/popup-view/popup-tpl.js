@@ -6,7 +6,7 @@ export const popupTemplate = (film) => {
   const {comments, filmInfo, checkedEmoji, newComment} = film;
   const getGenresHtml = () => {
     const genresHtml = [];
-    filmInfo.genres.forEach((item) => {
+    filmInfo.genre.forEach((item) => {
       genresHtml.push(`<span class="film-details__genre">${item}</span>`);
     });
     return genresHtml;
@@ -32,7 +32,7 @@ export const popupTemplate = (film) => {
           </div>
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
-              <img class="film-details__poster-img" src="./images/posters/${filmInfo.poster}.jpg" alt="${filmInfo.title}">
+              <img class="film-details__poster-img" src="${filmInfo.poster}" alt="${filmInfo.title}">
 
               <p class="film-details__age">${filmInfo.ageRating}</p>
             </div>
