@@ -1,4 +1,4 @@
-import {FILM_COUNT_PER_STEP, SORT_TYPE, UPDATE_TYPE, USER_ACTION, FILTER_TYPE} from '../consts';
+import {FILM_COUNT_PER_STEP, SORT_TYPE, UPDATE_TYPE, FILTER_TYPE} from '../consts';
 import {remove, render, RenderPosition} from '../framework/render';
 import {sortFilmDate, sortFilmRating} from '../utils/sort.js';
 import {filter} from '../utils/filter.js';
@@ -79,18 +79,8 @@ export default class BoardPresenter {
     this.#renderBoard();
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
-    switch (actionType) {
-      case USER_ACTION.UPDATE:
-        this.#filmsModel.updateFilm(updateType, update);
-        break;
-      case USER_ACTION.ADD:
-        this.#filmsModel.addFilm(updateType, update);
-        break;
-      case USER_ACTION.DELETE:
-        this.#filmsModel.deleteFilm(updateType, update);
-        break;
-    }
+  #handleFilmsViewAction = (updateType, update) => {
+    this.#filmsModel.updateFilm(updateType, update);
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -121,7 +111,7 @@ export default class BoardPresenter {
   }
 
   #renderFilm(film) {
-    const filmPresenter = new FilmPresenter(this.#boardContainer, this.#containerComponent.element, this.#handleViewAction);
+    const filmPresenter = new FilmPresenter(this.#boardContainer, this.#containerComponent.element, this.#handleFilmsViewAction);
     filmPresenter.init(film);
     this.#filmPresenter.set(film.id, filmPresenter);
   }

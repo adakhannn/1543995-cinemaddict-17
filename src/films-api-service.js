@@ -35,22 +35,24 @@ export default class FilmsApiService extends ApiService {
     };
     const adaptedFilmInfo = {...film.filmInfo,
       'release': adaptedRelease,
-      'user_details': adaptedUserDetails,
       'alternative_title': film.filmInfo.alternativeTitle,
       'total_rating': film.filmInfo.totalRating,
       'age_rating': film.filmInfo.ageRating,
     };
     const adaptedFilm = {...film,
       'film_info': adaptedFilmInfo,
+      'user_details': adaptedUserDetails,
     };
 
-    delete adaptedFilm.filmInfo.release.releaseCountry;
-    delete adaptedFilm.filmInfo.userDetails.watchList;
-    delete adaptedFilm.filmInfo.userDetails.alreadyWatched;
-    delete adaptedFilm.filmInfo.userDetails.watchingDate;
-    delete adaptedFilm.filmInfo.alternativeTitle;
-    delete adaptedFilm.filmInfo.filmInfo.totalRating;
-    delete adaptedFilm.filmInfo.filmInfo.ageRating;
+    delete adaptedFilm.film_info.release.releaseCountry;
+    delete adaptedFilm.user_details.watchList;
+    delete adaptedFilm.user_details.alreadyWatched;
+    delete adaptedFilm.user_details.watchingDate;
+    delete adaptedFilm.film_info.alternativeTitle;
+    delete adaptedFilm.film_info.totalRating;
+    delete adaptedFilm.film_info.ageRating;
+    delete adaptedFilm.filmInfo;
+    delete adaptedFilm.film_info.userDetails;
 
     return adaptedFilm;
   };

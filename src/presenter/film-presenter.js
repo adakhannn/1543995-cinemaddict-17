@@ -2,25 +2,33 @@ import {remove, render, replace} from '../framework/render';
 import {isEscapeKey} from '../utils/common';
 import CardView from '../view/card-view/card-view';
 import PopupView from '../view/popup-view/popup-view';
-import {USER_ACTION, UPDATE_TYPE} from '../consts.js';
+import {AUTHORIZATION, END_POINT, UPDATE_TYPE, USER_ACTION} from '../consts.js';
 import CommentPresenter from './comment-presenter';
+import CommentsModel from '../model/comments-model';
+import CommentsApiService from '../comments-api-service';
 
 export default class FilmPresenter {
   #boardContainer = null;
   #cardsContainer = null;
-  #changeData = null;
+  #changeFilmsData = null;
   #cardComponent = null;
   #popupComponent = null;
+  #commentsModel = null;
   #film = null;
+  #comments = null;
+  #commentPresenter = new Map();
 
-  constructor(boardContainer, cardsContainer, changeData) {
+  constructor(boardContainer, cardsContainer, changeFilmsData) {
     this.#boardContainer = boardContainer;
     this.#cardsContainer = cardsContainer;
-    this.#changeData = changeData;
+    this.#changeFilmsData = changeFilmsData;
   }
 
   init (film) {
     this.#film = film;
+    this.#commentsModel = new CommentsModel(new CommentsApiService(END_POINT, AUTHORIZATION), film);
+    this.#commentsModel.init();
+    this.#commentsModel.addObserver(this.#handleModelEvent);
 
     const prevCardComponent = this.#cardComponent;
     const prevPopupComponent = this.#popupComponent;
@@ -55,22 +63,45 @@ export default class FilmPresenter {
 
     remove(prevCardComponent);
     remove(prevPopupComponent);
-    this.#renderComments(this.#film.comments);
   }
+
+  #handleCommentsViewAction = (actionType, update) => {
+    switch (actionType) {
+      case USER_ACTION.ADD:
+        this.#commentsModel.addComment(update);
+        break;
+      case USER_ACTION.DELETE:
+        this.#commentsModel.deleteComment(update);
+        break;
+    }
+  };
+
+  #handleModelEvent = () => {
+    this.#renderComments();
+    this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
+  };
 
   destroy = () => {
     remove(this.#cardComponent);
     remove(this.#popupComponent);
   };
 
-  #renderComment(comment) {
-    const commentPresenter = new CommentPresenter(this.#popupComponent.element.querySelector('.film-details__comments-list'), this.#changeData);
+  #renderComment(comments, comment) {
+    const commentPresenter = new CommentPresenter(this.#popupComponent.element.querySelector('.film-details__comments-list'), this.#handleCommentsViewAction);
     commentPresenter.init(comment, this.#film);
+    this.#commentPresenter.set(comment.id, commentPresenter);
   }
 
-  #renderComments(comments) {
-    comments.forEach((comment) => this.#renderComment(comment));
+  #renderComments() {
+    this.#clearComments();
+    this.#comments = this.#commentsModel.comments;
+    this.#comments.forEach((comment) => this.#renderComment(this.#comments, comment));
   }
+
+  #clearComments = () => {
+    this.#commentPresenter.forEach((presenter) => presenter.destroy());
+    this.#commentPresenter.clear();
+  };
 
   #addPopup = () => {
     render(this.#popupComponent, this.#boardContainer);
@@ -97,10 +128,9 @@ export default class FilmPresenter {
   #handleAddPopup = () => {
     this.#removePopup();
     this.#addPopup();
-    this.#renderComments(this.#film.comments);
     this.#popupComponent.setFormSubmitHandler(this.#handleFormSubmit);
     document.addEventListener('keydown', this.#onEscKeyDown);
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
+    this.#renderComments();
   };
 
   #handleRemovePopup = () => {
@@ -110,24 +140,25 @@ export default class FilmPresenter {
 
   #handleWatchListClick = () => {
     this.#film.filmInfo.userDetails.watchList = !this.#film.filmInfo.userDetails.watchList;
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
+    this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
   };
 
   #handleAlreadyWatchedClick = () => {
     this.#film.filmInfo.userDetails.alreadyWatched = !this.#film.filmInfo.userDetails.alreadyWatched;
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
+    this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
   };
 
   #handleFavoriteClick = () => {
     this.#film.filmInfo.userDetails.favorite = !this.#film.filmInfo.userDetails.favorite;
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
+    this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
   };
 
   #handleEmojiChange = () => {
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
+    this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
+    this.#renderComments();
   };
 
   #handleFormSubmit = (film) => {
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, film);
+    this.#changeFilmsData(UPDATE_TYPE.PATCH, film);
   };
 }
