@@ -2,10 +2,10 @@ import {remove, render, replace} from '../framework/render';
 import {isEscapeKey} from '../utils/common';
 import CardView from '../view/card-view/card-view';
 import PopupView from '../view/popup-view/popup-view';
-import {AUTHORIZATION, END_POINT, UPDATE_TYPE, USER_ACTION} from '../consts.js';
-import CommentPresenter from './comment-presenter';
+import {AUTHORIZATION, END_POINT, UPDATE_TYPE} from '../consts.js';
 import CommentsModel from '../model/comments-model';
 import CommentsApiService from '../comments-api-service';
+import CommentsBoardPresenter from './comments-board-presenter';
 
 export default class FilmPresenter {
   #boardContainer = null;
@@ -15,8 +15,7 @@ export default class FilmPresenter {
   #popupComponent = null;
   #commentsModel = null;
   #film = null;
-  #comments = null;
-  #commentPresenter = new Map();
+  #commentsBoardPresenter = null;
 
   constructor(boardContainer, cardsContainer, changeFilmsData) {
     this.#boardContainer = boardContainer;
@@ -26,10 +25,8 @@ export default class FilmPresenter {
 
   init (film) {
     this.#film = film;
-    this.#commentsModel = new CommentsModel(new CommentsApiService(END_POINT, AUTHORIZATION), film);
-    this.#commentsModel.init();
+    this.#commentsModel = new CommentsModel(new CommentsApiService(END_POINT, AUTHORIZATION), this.#film);
     this.#commentsModel.addObserver(this.#handleModelEvent);
-
     const prevCardComponent = this.#cardComponent;
     const prevPopupComponent = this.#popupComponent;
 
@@ -65,42 +62,17 @@ export default class FilmPresenter {
     remove(prevPopupComponent);
   }
 
-  #handleCommentsViewAction = (actionType, update) => {
-    switch (actionType) {
-      case USER_ACTION.ADD:
-        this.#commentsModel.addComment(update);
-        break;
-      case USER_ACTION.DELETE:
-        this.#commentsModel.deleteComment(update);
-        break;
-    }
-  };
-
-  #handleModelEvent = () => {
-    this.#renderComments();
-    this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
-  };
-
   destroy = () => {
     remove(this.#cardComponent);
     remove(this.#popupComponent);
   };
 
-  #renderComment(comments, comment) {
-    const commentPresenter = new CommentPresenter(this.#popupComponent.element.querySelector('.film-details__comments-list'), this.#handleCommentsViewAction);
-    commentPresenter.init(comment, this.#film);
-    this.#commentPresenter.set(comment.id, commentPresenter);
-  }
-
-  #renderComments() {
-    this.#clearComments();
-    this.#comments = this.#commentsModel.comments;
-    this.#comments.forEach((comment) => this.#renderComment(this.#comments, comment));
-  }
-
-  #clearComments = () => {
-    this.#commentPresenter.forEach((presenter) => presenter.destroy());
-    this.#commentPresenter.clear();
+  #handleModelEvent = (updateType) => {
+    switch (updateType) {
+      case UPDATE_TYPE.INIT:
+        this.#renderCommentsBoard();
+        break;
+    }
   };
 
   #addPopup = () => {
@@ -125,12 +97,16 @@ export default class FilmPresenter {
     }
   };
 
+  #renderCommentsBoard() {
+    this.#commentsBoardPresenter = new CommentsBoardPresenter(this.#popupComponent.element.querySelector('.film-details__comments-wrap'), this.#commentsModel);
+    this.#commentsBoardPresenter.init();
+  }
+
   #handleAddPopup = () => {
     this.#removePopup();
     this.#addPopup();
     this.#popupComponent.setFormSubmitHandler(this.#handleFormSubmit);
     document.addEventListener('keydown', this.#onEscKeyDown);
-    this.#renderComments();
   };
 
   #handleRemovePopup = () => {
@@ -153,9 +129,8 @@ export default class FilmPresenter {
     this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
   };
 
-  #handleEmojiChange = () => {
-    this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
-    this.#renderComments();
+  #handleEmojiChange = (film) => {
+    this.init(film);
   };
 
   #handleFormSubmit = (film) => {

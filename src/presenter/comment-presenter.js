@@ -5,7 +5,6 @@ import {USER_ACTION} from '../consts';
 export default class CommentPresenter {
   #commentsContainer = null;
   #commentComponent = null;
-  #film = null;
   #comment = null;
   #changeCommentsData = null;
 
@@ -14,8 +13,7 @@ export default class CommentPresenter {
     this.#changeCommentsData = changeCommentsData;
   }
 
-  init (comment, film) {
-    this.#film = film;
+  init (comment) {
     this.#comment = comment;
     this.#commentComponent = new CommentView(comment);
     this.#commentComponent.setDeleteClickHandler(this.#handleDeleteClick);

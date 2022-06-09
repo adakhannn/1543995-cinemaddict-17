@@ -1,4 +1,5 @@
 import Observable from '../framework/observable.js';
+import {UPDATE_TYPE} from '../consts';
 
 export default class CommentsModel extends Observable {
   #commentsApiService = null;
@@ -21,6 +22,8 @@ export default class CommentsModel extends Observable {
     } catch(err) {
       this.#comments = [];
     }
+
+    this._notify(UPDATE_TYPE.INIT);
   };
 
   addComment = (update) => {
