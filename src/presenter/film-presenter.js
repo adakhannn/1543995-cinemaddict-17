@@ -26,6 +26,7 @@ export default class FilmPresenter {
   init (film) {
     this.#film = film;
     this.#commentsModel = new CommentsModel(new CommentsApiService(END_POINT, AUTHORIZATION), this.#film);
+    this.#commentsModel.init();
     this.#commentsModel.addObserver(this.#handleModelEvent);
     const prevCardComponent = this.#cardComponent;
     const prevPopupComponent = this.#popupComponent;
