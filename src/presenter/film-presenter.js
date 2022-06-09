@@ -2,26 +2,32 @@ import {remove, render, replace} from '../framework/render';
 import {isEscapeKey} from '../utils/common';
 import CardView from '../view/card-view/card-view';
 import PopupView from '../view/popup-view/popup-view';
-import {USER_ACTION, UPDATE_TYPE} from '../consts.js';
-import CommentPresenter from './comment-presenter';
+import {AUTHORIZATION, END_POINT, UPDATE_TYPE} from '../consts.js';
+import CommentsModel from '../model/comments-model';
+import CommentsApiService from '../comments-api-service';
+import CommentsBoardPresenter from './comments-board-presenter';
 
 export default class FilmPresenter {
   #boardContainer = null;
   #cardsContainer = null;
-  #changeData = null;
+  #changeFilmsData = null;
   #cardComponent = null;
   #popupComponent = null;
+  #commentsModel = null;
   #film = null;
+  #commentsBoardPresenter = null;
 
-  constructor(boardContainer, cardsContainer, changeData) {
+  constructor(boardContainer, cardsContainer, changeFilmsData) {
     this.#boardContainer = boardContainer;
     this.#cardsContainer = cardsContainer;
-    this.#changeData = changeData;
+    this.#changeFilmsData = changeFilmsData;
   }
 
   init (film) {
     this.#film = film;
-
+    this.#commentsModel = new CommentsModel(new CommentsApiService(END_POINT, AUTHORIZATION), this.#film);
+    this.#commentsModel.init();
+    this.#commentsModel.addObserver(this.#handleModelEvent);
     const prevCardComponent = this.#cardComponent;
     const prevPopupComponent = this.#popupComponent;
 
@@ -55,7 +61,6 @@ export default class FilmPresenter {
 
     remove(prevCardComponent);
     remove(prevPopupComponent);
-    this.#renderComments(this.#film.comments);
   }
 
   destroy = () => {
@@ -63,14 +68,16 @@ export default class FilmPresenter {
     remove(this.#popupComponent);
   };
 
-  #renderComment(comment) {
-    const commentPresenter = new CommentPresenter(this.#popupComponent.element.querySelector('.film-details__comments-list'), this.#changeData);
-    commentPresenter.init(comment, this.#film);
-  }
-
-  #renderComments(comments) {
-    comments.forEach((comment) => this.#renderComment(comment));
-  }
+  #handleModelEvent = (updateType) => {
+    switch (updateType) {
+      case UPDATE_TYPE.PATCH:
+        this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
+        break;
+      case UPDATE_TYPE.INIT:
+        this.#renderCommentsBoard();
+        break;
+    }
+  };
 
   #addPopup = () => {
     render(this.#popupComponent, this.#boardContainer);
@@ -94,13 +101,16 @@ export default class FilmPresenter {
     }
   };
 
+  #renderCommentsBoard() {
+    this.#commentsBoardPresenter = new CommentsBoardPresenter(this.#popupComponent.element.querySelector('.film-details__comments-wrap'), this.#commentsModel);
+    this.#commentsBoardPresenter.init();
+  }
+
   #handleAddPopup = () => {
     this.#removePopup();
     this.#addPopup();
-    this.#renderComments(this.#film.comments);
     this.#popupComponent.setFormSubmitHandler(this.#handleFormSubmit);
     document.addEventListener('keydown', this.#onEscKeyDown);
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
   };
 
   #handleRemovePopup = () => {
@@ -110,27 +120,24 @@ export default class FilmPresenter {
 
   #handleWatchListClick = () => {
     this.#film.filmInfo.userDetails.watchList = !this.#film.filmInfo.userDetails.watchList;
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.MINOR, this.#film);
-    this.#removePopup();
+    this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
   };
 
   #handleAlreadyWatchedClick = () => {
     this.#film.filmInfo.userDetails.alreadyWatched = !this.#film.filmInfo.userDetails.alreadyWatched;
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.MINOR, this.#film);
-    this.#removePopup();
+    this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
   };
 
   #handleFavoriteClick = () => {
     this.#film.filmInfo.userDetails.favorite = !this.#film.filmInfo.userDetails.favorite;
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.MINOR, this.#film);
-    this.#removePopup();
+    this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
   };
 
-  #handleEmojiChange = () => {
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, this.#film);
+  #handleEmojiChange = (film) => {
+    this.init(film);
   };
 
   #handleFormSubmit = (film) => {
-    this.#changeData(USER_ACTION.UPDATE, UPDATE_TYPE.PATCH, film);
+    this.#changeFilmsData(UPDATE_TYPE.PATCH, film);
   };
 }

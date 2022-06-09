@@ -83,17 +83,20 @@ export default class PopupView extends AbstractStatefulView {
 
   #watchListClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.watchListClick();
+    this._callback.watchListClick(this._state);
+    this.#autoScroll();
   };
 
   #alreadyWatchedClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.alreadyWatchedClick();
+    this._callback.alreadyWatchedClick(this._state);
+    this.#autoScroll();
   };
 
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.favoriteClick();
+    this._callback.favoriteClick(this._state);
+    this.#autoScroll();
   };
 
   #emojiChangeHandler = (evt) => {
@@ -103,7 +106,7 @@ export default class PopupView extends AbstractStatefulView {
         this._state.checkedEmoji = item.value;
       }
     });
-    this._callback.emojiChange();
+    this._callback.emojiChange(this._state);
     this.#autoScroll();
   };
 
@@ -124,8 +127,11 @@ export default class PopupView extends AbstractStatefulView {
   #formSubmitHandler = (evt) => {
     if(evt.ctrlKey && isEnterKey(evt)) {
       evt.preventDefault();
-      this._callback.formSubmit(PopupView.parseStateToFilm(this._state));
+      if (this._state.newComment !== undefined && this._state.checkedEmoji !== undefined) {
+        this._callback.formSubmit(PopupView.parseStateToFilm(this._state));
+      }
     }
+    this.#autoScroll();
   };
 
   _restoreHandlers = () => {

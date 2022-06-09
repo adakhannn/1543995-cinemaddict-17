@@ -7,13 +7,6 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-function getRandomFloat (a, b, digits = 1) {
-  const lower = Math.min(Math.abs(a), Math.abs(b));
-  const upper = Math.max(Math.abs(a), Math.abs(b));
-  const result = Math.random() * (upper - lower) + lower;
-  return result.toFixed(digits);
-}
-
 function generateRandomInfo (dates) {
   return dates[getRandomInteger(0, dates.length - 1)];
 }
@@ -30,4 +23,4 @@ const isEscapeKey = (evt) => evt.key === 'Escape';
 
 const isEnterKey = (evt) => evt.keyCode === 13;
 
-export {getRandomInteger, getRandomFloat, generateRandomInfo, humanizeDate, getTimeFromMins, isEscapeKey, isEnterKey};
+export {getRandomInteger, generateRandomInfo, humanizeDate, getTimeFromMins, isEscapeKey, isEnterKey};

@@ -30,6 +30,7 @@ const UPDATE_TYPE = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT:  'INIT',
 };
 
 const NO_FILMS_TEXTS = {
@@ -39,4 +40,7 @@ const NO_FILMS_TEXTS = {
   [FILTER_TYPE.FAVORITES]: 'There are no favorites movies now',
 };
 
-export {FILM_COUNT_PER_STEP, FILTER_TYPE, EMOTIONS, SORT_TYPE, UPDATE_TYPE, USER_ACTION, NO_FILMS_TEXTS};
+const AUTHORIZATION = 'Basic sjkdfhhs4uhjk4';
+const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
+
+export {FILM_COUNT_PER_STEP, FILTER_TYPE, EMOTIONS, SORT_TYPE, UPDATE_TYPE, USER_ACTION, NO_FILMS_TEXTS, AUTHORIZATION, END_POINT};

@@ -3,10 +3,10 @@ import {getTimeFromMins, humanizeDate} from '../../utils/common';
 import {EMOTIONS} from '../../consts';
 
 export const popupTemplate = (film) => {
-  const {comments, filmInfo, checkedEmoji, newComment} = film;
+  const {filmInfo, checkedEmoji, newComment} = film;
   const getGenresHtml = () => {
     const genresHtml = [];
-    filmInfo.genres.forEach((item) => {
+    filmInfo.genre.forEach((item) => {
       genresHtml.push(`<span class="film-details__genre">${item}</span>`);
     });
     return genresHtml;
@@ -32,7 +32,7 @@ export const popupTemplate = (film) => {
           </div>
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
-              <img class="film-details__poster-img" src="./images/posters/${filmInfo.poster}.jpg" alt="${filmInfo.title}">
+              <img class="film-details__poster-img" src="${filmInfo.poster}" alt="${filmInfo.title}">
 
               <p class="film-details__age">${filmInfo.ageRating}</p>
             </div>
@@ -87,18 +87,14 @@ export const popupTemplate = (film) => {
           </div>
 
           <section class="film-details__controls">
-            <button type="button" class="film-details__control-button film-details__control-button--watchlist ${filmInfo.userDetails.watchList ? '' : 'film-details__control-button--active'}" id="watchlist" name="watchlist">Add to watchlist</button>
-            <button type="button" class="film-details__control-button film-details__control-button--watched ${filmInfo.userDetails.alreadyWatched ? '' : 'film-details__control-button--active'}" id="watched" name="watched">Already watched</button>
-            <button type="button" class="film-details__control-button film-details__control-button--favorite ${filmInfo.userDetails.favorite ? '' : 'film-details__control-button--active'}" id="favorite" name="favorite">Add to favorites</button>
+            <button type="button" class="film-details__control-button film-details__control-button--watchlist ${filmInfo.userDetails.watchList ? 'film-details__control-button--active' : ''}" id="watchlist" name="watchlist">Add to watchlist</button>
+            <button type="button" class="film-details__control-button film-details__control-button--watched ${filmInfo.userDetails.alreadyWatched ? 'film-details__control-button--active' : ''}" id="watched" name="watched">Already watched</button>
+            <button type="button" class="film-details__control-button film-details__control-button--favorite ${filmInfo.userDetails.favorite ? 'film-details__control-button--active' : ''}" id="favorite" name="favorite">Add to favorites</button>
           </section>
         </div>
 
         <div class="film-details__bottom-container">
           <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
-
-            <ul class="film-details__comments-list"></ul>
-
             <div class="film-details__new-comment">
               <div class="film-details__add-emoji-label">${checkedEmoji ? `<img src="./images/emoji/${checkedEmoji}.png" width="70" height="70" alt="${checkedEmoji}">` : ''}</div>
 
