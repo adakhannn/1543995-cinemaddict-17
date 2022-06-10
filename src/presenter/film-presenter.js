@@ -70,9 +70,6 @@ export default class FilmPresenter {
 
   #handleModelEvent = (updateType) => {
     switch (updateType) {
-      case UPDATE_TYPE.PATCH:
-        this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
-        break;
       case UPDATE_TYPE.INIT:
         this.#renderCommentsBoard();
         break;

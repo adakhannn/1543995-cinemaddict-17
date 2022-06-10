@@ -1,8 +1,8 @@
-import {render, RenderPosition} from '../framework/render';
+import {remove, render, RenderPosition} from '../framework/render';
 import CommentsCountView from '../view/comments-container-view/comments-count-view';
 import CommentPresenter from './comment-presenter';
 import CommentsListView from '../view/comments-list-view/comments-list-view';
-import {USER_ACTION} from '../consts';
+import {UPDATE_TYPE, USER_ACTION} from '../consts';
 
 export default class CommentsBoardPresenter {
   #commentsContainer = null;
@@ -10,10 +10,13 @@ export default class CommentsBoardPresenter {
   #commentsCountComponent = null;
   #commentsListComponent = new CommentsListView();
   #commentsPresenter = new Map();
+  #comments = null;
+  #commentsCount = null;
 
   constructor(commentsContainer, commentsModel) {
     this.#commentsContainer = commentsContainer;
     this.#commentsModel = commentsModel;
+    this.#commentsModel.addObserver(this.#handleModelEvent);
   }
 
   get comments() {
@@ -25,12 +28,12 @@ export default class CommentsBoardPresenter {
   }
 
   #renderCommentsBoard() {
-    const comments = this.comments;
-    const commentsCount = comments.length;
-    this.#commentsCountComponent = new CommentsCountView(commentsCount);
+    this.#comments = this.comments;
+    this.#commentsCount = this.#comments.length;
+    this.#commentsCountComponent = new CommentsCountView(this.#commentsCount);
     render(this.#commentsListComponent, this.#commentsContainer, RenderPosition.AFTERBEGIN);
     render(this.#commentsCountComponent, this.#commentsContainer, RenderPosition.AFTERBEGIN);
-    this.#renderComments(comments);
+    this.#renderComments(this.#comments);
   }
 
   #renderComment(comment) {
@@ -42,6 +45,18 @@ export default class CommentsBoardPresenter {
   #renderComments(comments) {
     comments.forEach((comment) => this.#renderComment(comment));
   }
+
+  #handleModelEvent = (updateType, update) => {
+    switch (updateType) {
+      case UPDATE_TYPE.PATCH:
+        remove(this.#commentsCountComponent);
+        this.#commentsCount--;
+        this.#commentsCountComponent = new CommentsCountView(this.#commentsCount);
+        render(this.#commentsCountComponent, this.#commentsContainer, RenderPosition.AFTERBEGIN);
+        this.#commentsPresenter.get(update.id).destroy();
+        break;
+    }
+  };
 
   #handleCommentsViewAction = (actionType, update) => {
     switch (actionType) {
