@@ -21,29 +21,18 @@ export default class FiltersPresenter {
 
   get filters() {
     const films = this.#filmsModel.films;
+    const filters = [];
 
-    return [
-      {
-        type: FILTER_TYPE.ALL,
-        name: 'All',
-        count: filter[FILTER_TYPE.ALL](films).length,
-      },
-      {
-        type: FILTER_TYPE.WATCHLIST,
-        name: 'Watchlist',
-        count: filter[FILTER_TYPE.WATCHLIST](films).length,
-      },
-      {
-        type: FILTER_TYPE.HISTORY,
-        name: 'History',
-        count: filter[FILTER_TYPE.HISTORY](films).length,
-      },
-      {
-        type: FILTER_TYPE.FAVORITES,
-        name: 'Favorites',
-        count: filter[FILTER_TYPE.FAVORITES](films).length,
-      },
-    ];
+    for (const item in FILTER_TYPE) {
+      filters.push(
+        {
+          name: FILTER_TYPE[item],
+          count: filter[FILTER_TYPE[item]](films).length,
+        }
+      );
+    }
+
+    return filters;
   }
 
   init = () => {

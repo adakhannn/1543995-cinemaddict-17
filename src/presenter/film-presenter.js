@@ -2,7 +2,7 @@ import {remove, render, replace} from '../framework/render';
 import {isEscapeKey} from '../utils/common';
 import CardView from '../view/card-view/card-view';
 import PopupView from '../view/popup-view/popup-view';
-import {AUTHORIZATION, END_POINT, UPDATE_TYPE} from '../consts.js';
+import {UPDATE_TYPE} from '../consts.js';
 import CommentsModel from '../model/comments-model';
 import CommentsApiService from '../comments-api-service';
 import CommentsBoardPresenter from './comments-board-presenter';
@@ -25,7 +25,7 @@ export default class FilmPresenter {
 
   init (film) {
     this.#film = film;
-    this.#commentsModel = new CommentsModel(new CommentsApiService(END_POINT, AUTHORIZATION), this.#film);
+    this.#commentsModel = new CommentsModel(new CommentsApiService('https://17.ecmascript.pages.academy/cinemaddict', 'Basic sjkdfhhs4uhjk4'), this.#film);
     this.#commentsModel.init();
     this.#commentsModel.addObserver(this.#handleModelEvent);
     const prevCardComponent = this.#cardComponent;
