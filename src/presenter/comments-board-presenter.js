@@ -96,7 +96,7 @@ export default class CommentsBoardPresenter {
       });
     };*/
 
-    this.#newCommentComponent.shake();
+    this.#newCommentComponent.shake(/*resetFormState*/);
   };
 
   #handleCommentsViewAction = async (actionType, update) => {
