@@ -16,12 +16,28 @@ export default class CommentPresenter {
   init (comment) {
     this.#comment = comment;
     this.#commentComponent = new CommentView(comment);
-    this.#commentComponent.setDeleteClickHandler(this.#handleDeleteClick);
     render(this.#commentComponent, this.#commentsContainer);
+    this.#commentComponent.setDeleteClickHandler(this.#handleDeleteClick);
   }
 
   destroy = () => {
     remove(this.#commentComponent);
+  };
+
+  setDeleting = () => {
+    this.#commentComponent.updateElement({
+      isDeleting: true,
+    });
+  };
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#commentComponent.updateElement({
+        isDeleting: false,
+      });
+    };
+
+    this.#commentComponent.shake(resetFormState);
   };
 
   #handleDeleteClick = () => {

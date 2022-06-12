@@ -11,7 +11,7 @@ export const commentTemplate = (comment) => (
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comment.author}</span>
           <span class="film-details__comment-day">${humanizeDate(comment.date, 'DD/MM/YYYY HH:mm')}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button class="film-details__comment-delete" ${comment.isDeleting ? 'disabled="disabled"' : ''}>${comment.isDeleting ? 'Deleting..' : 'Delete'}</button>
         </p>
       </div>
     </li>`

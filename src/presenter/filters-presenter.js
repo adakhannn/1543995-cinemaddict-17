@@ -1,7 +1,7 @@
 import {render, replace, remove} from '../framework/render.js';
 import FiltersView from '../view/filters-view/filters-view';
 import {filter} from '../utils/filter.js';
-import {FILTER_TYPE, UPDATE_TYPE} from '../consts.js';
+import {FILTER_TYPE, FILM_UPDATE_TYPE} from '../consts.js';
 
 export default class FiltersPresenter {
   #filterContainer = null;
@@ -15,8 +15,8 @@ export default class FiltersPresenter {
     this.#filtersModel = filtersModel;
     this.#filmsModel = filmsModel;
 
-    this.#filmsModel.addObserver(this.#handleModelEvent);
-    this.#filtersModel.addObserver(this.#handleModelEvent);
+    this.#filmsModel.addObserver(this.#handleFilmsModelEvent);
+    this.#filtersModel.addObserver(this.#handleFilmsModelEvent);
   }
 
   get filters() {
@@ -51,7 +51,7 @@ export default class FiltersPresenter {
     remove(prevFilterComponent);
   };
 
-  #handleModelEvent = () => {
+  #handleFilmsModelEvent = () => {
     this.init();
   };
 
@@ -60,6 +60,6 @@ export default class FiltersPresenter {
       return;
     }
 
-    this.#filtersModel.setFilter(UPDATE_TYPE.MAJOR, filterType);
+    this.#filtersModel.setFilter(FILM_UPDATE_TYPE.MAJOR, filterType);
   };
 }

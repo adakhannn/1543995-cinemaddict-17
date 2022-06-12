@@ -2,15 +2,18 @@ import {commentTemplate} from './comment-tpl';
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 
 export default class CommentView extends AbstractStatefulView {
-  #comment = null;
   constructor(comment) {
     super();
-    this.#comment = comment;
+    this._state = CommentView.parseCommentToState(comment);
   }
 
   get template() {
-    return commentTemplate(this.#comment);
+    return commentTemplate(this._state);
   }
+
+  static parseCommentToState = (comment) => ({...comment,
+    isDeleting: false,
+  });
 
   setDeleteClickHandler = (callback) => {
     this._callback.deleteClick = callback;

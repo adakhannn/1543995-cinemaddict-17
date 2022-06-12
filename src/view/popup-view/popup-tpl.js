@@ -1,27 +1,13 @@
-import he from 'he';
 import {getTimeFromMins, humanizeDate} from '../../utils/common';
-import {EMOTIONS} from '../../consts';
 
 export const popupTemplate = (film) => {
-  const {filmInfo, checkedEmoji, newComment} = film;
+  const {filmInfo} = film;
   const getGenresHtml = () => {
     const genresHtml = [];
     filmInfo.genre.forEach((item) => {
       genresHtml.push(`<span class="film-details__genre">${item}</span>`);
     });
     return genresHtml;
-  };
-  const getEmotionsHtml = () => {
-    const EmotionsHtml = [];
-    EMOTIONS.forEach((item) => {
-      EmotionsHtml.push(
-        `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${item}" value="${item}" ${checkedEmoji === item ? 'checked' : ''}>
-          <label class="film-details__emoji-label" for="emoji-${item}">
-            <img src="./images/emoji/${item}.png" width="30" height="30" alt="emoji">
-          </label>`
-      );
-    });
-    return EmotionsHtml;
   };
   return (
     `<section class="film-details">
@@ -85,28 +71,10 @@ export const popupTemplate = (film) => {
               <p class="film-details__film-description">${filmInfo.description}</p>
             </div>
           </div>
-
-          <section class="film-details__controls">
-            <button type="button" class="film-details__control-button film-details__control-button--watchlist ${filmInfo.userDetails.watchList ? 'film-details__control-button--active' : ''}" id="watchlist" name="watchlist">Add to watchlist</button>
-            <button type="button" class="film-details__control-button film-details__control-button--watched ${filmInfo.userDetails.alreadyWatched ? 'film-details__control-button--active' : ''}" id="watched" name="watched">Already watched</button>
-            <button type="button" class="film-details__control-button film-details__control-button--favorite ${filmInfo.userDetails.favorite ? 'film-details__control-button--active' : ''}" id="favorite" name="favorite">Add to favorites</button>
-          </section>
         </div>
 
         <div class="film-details__bottom-container">
-          <section class="film-details__comments-wrap">
-            <div class="film-details__new-comment">
-              <div class="film-details__add-emoji-label">${checkedEmoji ? `<img src="./images/emoji/${checkedEmoji}.png" width="70" height="70" alt="${checkedEmoji}">` : ''}</div>
-
-              <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="${newComment ? '' : 'Select reaction below and write comment here'}" name="comment" >${newComment ? `${he.encode(newComment)}` : ''}</textarea>
-              </label>
-
-              <div class="film-details__emoji-list">
-                ${getEmotionsHtml().join('')}
-              </div>
-            </div>
-          </section>
+          <section class="film-details__comments-wrap"></section>
         </div>
       </form>
    </section>`
