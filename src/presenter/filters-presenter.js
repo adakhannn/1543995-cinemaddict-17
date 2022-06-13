@@ -1,7 +1,7 @@
 import {render, replace, remove} from '../framework/render.js';
 import FiltersView from '../view/filters-view/filters-view';
 import {filter} from '../utils/filter.js';
-import {FILTER_TYPE, UPDATE_TYPE} from '../consts.js';
+import {FILTER_TYPE, FILM_UPDATE_TYPE} from '../consts.js';
 
 export default class FiltersPresenter {
   #filterContainer = null;
@@ -15,35 +15,24 @@ export default class FiltersPresenter {
     this.#filtersModel = filtersModel;
     this.#filmsModel = filmsModel;
 
-    this.#filmsModel.addObserver(this.#handleModelEvent);
-    this.#filtersModel.addObserver(this.#handleModelEvent);
+    this.#filmsModel.addObserver(this.#handleFilmsModelEvent);
+    this.#filtersModel.addObserver(this.#handleFilmsModelEvent);
   }
 
   get filters() {
     const films = this.#filmsModel.films;
+    const filters = [];
 
-    return [
-      {
-        type: FILTER_TYPE.ALL,
-        name: 'All',
-        count: filter[FILTER_TYPE.ALL](films).length,
-      },
-      {
-        type: FILTER_TYPE.WATCHLIST,
-        name: 'Watchlist',
-        count: filter[FILTER_TYPE.WATCHLIST](films).length,
-      },
-      {
-        type: FILTER_TYPE.HISTORY,
-        name: 'History',
-        count: filter[FILTER_TYPE.HISTORY](films).length,
-      },
-      {
-        type: FILTER_TYPE.FAVORITES,
-        name: 'Favorites',
-        count: filter[FILTER_TYPE.FAVORITES](films).length,
-      },
-    ];
+    for (const item in FILTER_TYPE) {
+      filters.push(
+        {
+          name: FILTER_TYPE[item],
+          count: filter[FILTER_TYPE[item]](films).length,
+        }
+      );
+    }
+
+    return filters;
   }
 
   init = () => {
@@ -62,7 +51,7 @@ export default class FiltersPresenter {
     remove(prevFilterComponent);
   };
 
-  #handleModelEvent = () => {
+  #handleFilmsModelEvent = () => {
     this.init();
   };
 
@@ -71,6 +60,6 @@ export default class FiltersPresenter {
       return;
     }
 
-    this.#filtersModel.setFilter(UPDATE_TYPE.MAJOR, filterType);
+    this.#filtersModel.setFilter(FILM_UPDATE_TYPE.MAJOR, filterType);
   };
 }

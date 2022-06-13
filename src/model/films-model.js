@@ -1,5 +1,5 @@
 import Observable from '../framework/observable';
-import {UPDATE_TYPE} from '../consts';
+import {FILM_UPDATE_TYPE} from '../consts';
 export default class FilmsModel extends Observable {
   #filmsApiService = null;
   #films = [];
@@ -20,16 +20,14 @@ export default class FilmsModel extends Observable {
     } catch(err) {
       this.#films = [];
     }
-    this._notify(UPDATE_TYPE.INIT);
+    this._notify(FILM_UPDATE_TYPE.INIT);
   };
 
   updateFilm = async (updateType, update) => {
     const index = this.#films.findIndex((film) => film.id === update.id);
-
     if (index === -1) {
       throw new Error('Can\'t update unexisting film');
     }
-
     try {
       const response = await this.#filmsApiService.updateFilm(update);
       const updatedFilm= this.#adaptToClient(response);
@@ -49,16 +47,16 @@ export default class FilmsModel extends Observable {
       releaseCountry: film['film_info']['release']['release_country'],
     };
     const adaptedUserDetails = {...film['user_details'],
-      watchList: film['user_details']['watchlist'],
+      watchList:      film['user_details']['watchlist'],
       alreadyWatched: film['user_details']['already_watched'],
-      watchingDate: film['user_details']['watching_date'],
+      watchingDate:   film['user_details']['watching_date'],
     };
     const adaptedFilmInfo = {...film['film_info'],
-      release: adaptedRelease,
-      userDetails: adaptedUserDetails,
+      release:          adaptedRelease,
+      userDetails:      adaptedUserDetails,
       alternativeTitle: film['film_info']['alternative_title'],
-      totalRating: film['film_info']['total_rating'],
-      ageRating: film['film_info']['age_rating'],
+      totalRating:      film['film_info']['total_rating'],
+      ageRating:        film['film_info']['age_rating'],
     };
     const adaptedFilm = {...film,
       filmInfo: adaptedFilmInfo,

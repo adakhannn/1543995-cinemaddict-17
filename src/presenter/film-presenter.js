@@ -1,64 +1,59 @@
+import {COMMENT_UPDATE_TYPE, FILM_UPDATE_TYPE} from '../consts.js';
 import {remove, render, replace} from '../framework/render';
 import {isEscapeKey} from '../utils/common';
 import CardView from '../view/card-view/card-view';
 import PopupView from '../view/popup-view/popup-view';
-import {AUTHORIZATION, END_POINT, UPDATE_TYPE} from '../consts.js';
+import CommentsBoardPresenter from './comments-board-presenter';
+import filmControlsView from '../view/film-controls-view/film-controls-view';
 import CommentsModel from '../model/comments-model';
 import CommentsApiService from '../comments-api-service';
-import CommentsBoardPresenter from './comments-board-presenter';
 
 export default class FilmPresenter {
+  #film = null;
   #boardContainer = null;
   #cardsContainer = null;
-  #changeFilmsData = null;
   #cardComponent = null;
   #popupComponent = null;
+  #filmControlsComponent = null;
+  #filmsModel = null;
   #commentsModel = null;
-  #film = null;
   #commentsBoardPresenter = null;
 
-  constructor(boardContainer, cardsContainer, changeFilmsData) {
+  constructor(boardContainer, cardsContainer, filmsModel) {
     this.#boardContainer = boardContainer;
     this.#cardsContainer = cardsContainer;
-    this.#changeFilmsData = changeFilmsData;
+    this.#filmsModel = filmsModel;
   }
 
   init (film) {
-    this.#film = film;
-    this.#commentsModel = new CommentsModel(new CommentsApiService(END_POINT, AUTHORIZATION), this.#film);
-    this.#commentsModel.init();
-    this.#commentsModel.addObserver(this.#handleModelEvent);
     const prevCardComponent = this.#cardComponent;
     const prevPopupComponent = this.#popupComponent;
-
+    this.#film = film;
+    this.#commentsModel = new CommentsModel(new CommentsApiService('https://17.ecmascript.pages.academy/cinemaddict', 'Basic sjkdfhhs4uhjk4'), this.#film);
+    this.#commentsModel.init();
+    this.#commentsModel.addObserver(this.#handleModelEvent);
     this.#cardComponent = new CardView(film);
     this.#popupComponent = new PopupView(film);
-
+    this.#filmControlsComponent = new filmControlsView(film);
     this.#cardComponent.setShowClickHandler(this.#handleAddPopup);
     this.#cardComponent.setCardWatchListClickHandler(this.#handleWatchListClick);
     this.#cardComponent.setCardAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
     this.#cardComponent.setCardFavoriteClickHandler(this.#handleFavoriteClick);
     this.#popupComponent.setCloseClickHandler(this.#handleRemovePopup);
-    this.#popupComponent.setPopupWatchListClickHandler(this.#handleWatchListClick);
-    this.#popupComponent.setPopupAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
-    this.#popupComponent.setPopupFavoriteClickHandler(this.#handleFavoriteClick);
-    this.#popupComponent.setEmojiChangeHandler(this.#handleEmojiChange);
-    this.#popupComponent.setTextareaChangeHandler();
-    this.#popupComponent.setPopupScrollHandler();
-
+    this.#filmControlsComponent.setPopupWatchListClickHandler(this.#handleWatchListClick);
+    this.#filmControlsComponent.setPopupAlreadyWatchedClickHandler(this.#handleAlreadyWatchedClick);
+    this.#filmControlsComponent.setPopupFavoriteClickHandler(this.#handleFavoriteClick);
     if (prevCardComponent === null || prevPopupComponent === null) {
       render(this.#cardComponent, this.#cardsContainer);
       return;
     }
-
     if (this.#cardsContainer.contains(prevCardComponent.element)) {
       replace(this.#cardComponent, prevCardComponent);
     }
-
     if (this.#boardContainer.contains(prevPopupComponent.element)) {
       replace(this.#popupComponent, prevPopupComponent);
+      render(this.#filmControlsComponent, this.#popupComponent.element.querySelector('.film-details__top-container'));
     }
-
     remove(prevCardComponent);
     remove(prevPopupComponent);
   }
@@ -68,19 +63,23 @@ export default class FilmPresenter {
     remove(this.#popupComponent);
   };
 
+  #handleFilmsViewAction = async (updateType, update) => {
+    try {
+      await this.#filmsModel.updateFilm(updateType, update);
+    } catch(err) {
+      this.#filmControlsComponent.shake();
+    }
+  };
+
   #handleModelEvent = (updateType) => {
-    switch (updateType) {
-      case UPDATE_TYPE.PATCH:
-        this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
-        break;
-      case UPDATE_TYPE.INIT:
-        this.#renderCommentsBoard();
-        break;
+    if (updateType === COMMENT_UPDATE_TYPE.INIT) {
+      this.#renderCommentsBoard();
     }
   };
 
   #addPopup = () => {
     render(this.#popupComponent, this.#boardContainer);
+    render(this.#filmControlsComponent, this.#popupComponent.element.querySelector('.film-details__top-container'));
     this.#boardContainer.parentElement.classList.add('hide-overflow');
   };
 
@@ -96,8 +95,8 @@ export default class FilmPresenter {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.#removePopup();
-      this.#popupComponent.setEscClickHandler();
       document.removeEventListener('keydown', this.#onEscKeyDown);
+      this.#handleFilmsViewAction(FILM_UPDATE_TYPE.PATCH, this.#film);
     }
   };
 
@@ -109,35 +108,27 @@ export default class FilmPresenter {
   #handleAddPopup = () => {
     this.#removePopup();
     this.#addPopup();
-    this.#popupComponent.setFormSubmitHandler(this.#handleFormSubmit);
     document.addEventListener('keydown', this.#onEscKeyDown);
   };
 
   #handleRemovePopup = () => {
     this.#removePopup();
     document.removeEventListener('keydown', this.#onEscKeyDown);
+    this.#handleFilmsViewAction(FILM_UPDATE_TYPE.PATCH, this.#film);
   };
 
   #handleWatchListClick = () => {
     this.#film.filmInfo.userDetails.watchList = !this.#film.filmInfo.userDetails.watchList;
-    this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
+    this.#handleFilmsViewAction(FILM_UPDATE_TYPE.PATCH, this.#film);
   };
 
   #handleAlreadyWatchedClick = () => {
     this.#film.filmInfo.userDetails.alreadyWatched = !this.#film.filmInfo.userDetails.alreadyWatched;
-    this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
+    this.#handleFilmsViewAction(FILM_UPDATE_TYPE.PATCH, this.#film);
   };
 
   #handleFavoriteClick = () => {
     this.#film.filmInfo.userDetails.favorite = !this.#film.filmInfo.userDetails.favorite;
-    this.#changeFilmsData(UPDATE_TYPE.PATCH, this.#film);
-  };
-
-  #handleEmojiChange = (film) => {
-    this.init(film);
-  };
-
-  #handleFormSubmit = (film) => {
-    this.#changeFilmsData(UPDATE_TYPE.PATCH, film);
+    this.#handleFilmsViewAction(FILM_UPDATE_TYPE.PATCH, this.#film);
   };
 }

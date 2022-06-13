@@ -1,4 +1,4 @@
-import {FILM_COUNT_PER_STEP, SORT_TYPE, UPDATE_TYPE, FILTER_TYPE} from '../consts';
+import {FILM_COUNT_PER_STEP, SORT_TYPE, FILM_UPDATE_TYPE, FILTER_TYPE} from '../consts';
 import {remove, render, RenderPosition} from '../framework/render';
 import {sortFilmDate, sortFilmRating} from '../utils/sort.js';
 import {filter} from '../utils/filter.js';
@@ -12,37 +12,34 @@ import LoadingView from '../view/loading-view/loading-view';
 import FilmPresenter from './film-presenter';
 
 export default class BoardPresenter {
+  #renderedFilmCount = FILM_COUNT_PER_STEP;
+  #currentSortType = SORT_TYPE.DEFAULT;
+  #filterType = FILTER_TYPE.ALL;
+  #isLoading = true;
   #boardContainer = null;
   #filmsModel = null;
+  #filtersModel = null;
   #sortComponent = null;
   #moreButtonComponent = null;
-  #filtersModel = null;
   #cardEmptyComponent = null;
-
-  #renderedFilmCount = FILM_COUNT_PER_STEP;
   #boardComponent = new BoardView();
   #listComponent = new ListView();
   #containerComponent = new ContainerView();
   #loadingComponent = new LoadingView();
   #filmPresenter = new Map();
-  #currentSortType = SORT_TYPE.DEFAULT;
-  #filterType = FILTER_TYPE.ALL;
-  #isLoading = true;
 
   constructor(boardContainer, filmsModel, filtersModel) {
     this.#boardContainer = boardContainer;
     this.#filmsModel = filmsModel;
     this.#filtersModel = filtersModel;
-
-    this.#filmsModel.addObserver(this.#handleModelEvent);
-    this.#filtersModel.addObserver(this.#handleModelEvent);
+    this.#filmsModel.addObserver(this.#handleFilmsModelEvent);
+    this.#filtersModel.addObserver(this.#handleFilmsModelEvent);
   }
 
   get films() {
     this.#filterType = this.#filtersModel.filter;
     const films = this.#filmsModel.films;
     const filteredFilms = filter[this.#filterType](films);
-
     switch (this.#currentSortType) {
       case SORT_TYPE.DATE:
         return filteredFilms.sort(sortFilmDate);
@@ -60,10 +57,8 @@ export default class BoardPresenter {
     const filmCount = this.films.length;
     const newRenderedFilmCount = Math.min(filmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP);
     const films = this.films.slice(this.#renderedFilmCount, newRenderedFilmCount);
-
     this.#renderFilms(films);
     this.#renderedFilmCount = newRenderedFilmCount;
-
     if (this.#renderedFilmCount >= filmCount) {
       remove(this.#moreButtonComponent);
     }
@@ -73,30 +68,21 @@ export default class BoardPresenter {
     if (this.#currentSortType === sortType) {
       return;
     }
-
     this.#currentSortType = sortType;
     this.#clearBoard({resetRenderedFilmCount: true});
     this.#renderBoard();
   };
 
-  #handleFilmsViewAction = (updateType, update) => {
-    this.#filmsModel.updateFilm(updateType, update);
-  };
-
-  #handleModelEvent = (updateType, data) => {
+  #handleFilmsModelEvent = (updateType, data) => {
     switch (updateType) {
-      case UPDATE_TYPE.PATCH:
+      case FILM_UPDATE_TYPE.PATCH:
         this.#filmPresenter.get(data.id).init(data);
         break;
-      case UPDATE_TYPE.MINOR:
-        this.#clearBoard();
-        this.#renderBoard();
-        break;
-      case UPDATE_TYPE.MAJOR:
+      case FILM_UPDATE_TYPE.MAJOR:
         this.#clearBoard({resetRenderedFilmCount: true, resetSortType: true});
         this.#renderBoard();
         break;
-      case UPDATE_TYPE.INIT:
+      case FILM_UPDATE_TYPE.INIT:
         this.#isLoading = false;
         remove(this.#loadingComponent);
         this.#renderBoard();
@@ -111,7 +97,7 @@ export default class BoardPresenter {
   }
 
   #renderFilm(film) {
-    const filmPresenter = new FilmPresenter(this.#boardContainer, this.#containerComponent.element, this.#handleFilmsViewAction);
+    const filmPresenter = new FilmPresenter(this.#boardContainer, this.#containerComponent.element, this.#filmsModel);
     filmPresenter.init(film);
     this.#filmPresenter.set(film.id, filmPresenter);
   }
@@ -133,12 +119,10 @@ export default class BoardPresenter {
 
   #renderBoard() {
     render(this.#containerComponent, this.#listComponent.element);
-
     if (this.#isLoading) {
       this.#renderLoading();
       return;
     }
-
     const films = this.films;
     const filmCount = films.length;
     this.#renderMainContainer();
@@ -156,23 +140,18 @@ export default class BoardPresenter {
 
   #clearBoard = ({resetRenderedFilmCount = false, resetSortType = false} = {}) => {
     const filmCount = this.films.length;
-
     this.#filmPresenter.forEach((presenter) => presenter.destroy());
     this.#filmPresenter.clear();
-
     remove(this.#sortComponent);
     remove(this.#moreButtonComponent);
-
     if (this.#cardEmptyComponent) {
       remove(this.#cardEmptyComponent);
     }
-
     if (resetRenderedFilmCount) {
       this.#renderedFilmCount = FILM_COUNT_PER_STEP;
     } else {
       this.#renderedFilmCount = Math.min(filmCount, this.#renderedFilmCount);
     }
-
     if (resetSortType) {
       this.#currentSortType = SORT_TYPE.DEFAULT;
     }

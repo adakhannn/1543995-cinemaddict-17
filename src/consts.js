@@ -26,11 +26,16 @@ const USER_ACTION = {
   DELETE: 'DELETE',
 };
 
-const UPDATE_TYPE = {
+const FILM_UPDATE_TYPE = {
   PATCH: 'PATCH',
-  MINOR: 'MINOR',
   MAJOR: 'MAJOR',
   INIT:  'INIT',
+};
+
+const COMMENT_UPDATE_TYPE = {
+  DELETE: 'DELETE',
+  ADD:    'ADD',
+  INIT:   'INIT',
 };
 
 const NO_FILMS_TEXTS = {
@@ -40,7 +45,4 @@ const NO_FILMS_TEXTS = {
   [FILTER_TYPE.FAVORITES]: 'There are no favorites movies now',
 };
 
-const AUTHORIZATION = 'Basic sjkdfhhs4uhjk4';
-const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
-
-export {FILM_COUNT_PER_STEP, FILTER_TYPE, EMOTIONS, SORT_TYPE, UPDATE_TYPE, USER_ACTION, NO_FILMS_TEXTS, AUTHORIZATION, END_POINT};
+export {FILM_COUNT_PER_STEP, FILTER_TYPE, EMOTIONS, SORT_TYPE, FILM_UPDATE_TYPE, USER_ACTION, NO_FILMS_TEXTS, COMMENT_UPDATE_TYPE};
