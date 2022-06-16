@@ -73,9 +73,7 @@ export const popupTemplate = (film) => {
           </div>
         </div>
 
-        <div class="film-details__bottom-container">
-          <section class="film-details__comments-wrap"></section>
-        </div>
+        <div class="film-details__bottom-container"></div>
       </form>
    </section>`
   );

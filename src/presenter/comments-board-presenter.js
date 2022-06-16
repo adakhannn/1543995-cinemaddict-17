@@ -2,18 +2,17 @@ import {COMMENT_UPDATE_TYPE, USER_ACTION} from '../consts';
 import {remove, render, RenderPosition} from '../framework/render';
 import CommentPresenter from './comment-presenter';
 import CommentsCountView from '../view/comments-container-view/comments-count-view';
-import CommentsListView from '../view/comments-list-view/comments-list-view';
+import CommentsBoardView from '../view/comments-board-view/comments-board-view';
 import NewCommentView from '../view/new-comment-view/new-comment-view';
 import LoadingView from '../view/loading-view/loading-view';
 
 export default class CommentsBoardPresenter {
   #comments = null;
-  #commentsCount = null;
   #commentsContainer = null;
   #commentsModel = null;
   #commentsPresenter = new Map();
   #commentsCountComponent = null;
-  #commentsListComponent = new CommentsListView();
+  #commentsBoardComponent = new CommentsBoardView();
   #newCommentComponent = new NewCommentView();
   #loadingComponent = new LoadingView();
 
@@ -33,26 +32,28 @@ export default class CommentsBoardPresenter {
 
   #renderCommentsBoard() {
     this.#comments = this.comments;
-    this.#commentsCount = this.#comments.length;
-    this.#commentsCountComponent = new CommentsCountView(this.#commentsCount);
-    render(this.#newCommentComponent, this.#commentsContainer, RenderPosition.AFTERBEGIN);
-    this.#newCommentComponent.setEmojiChangeHandler(this.#handleEmojiChange);
-    this.#newCommentComponent.setFormSubmitHandler(this.#handleFormSubmit);
-    this.#newCommentComponent.setTextareaChangeHandler();
-    render(this.#commentsListComponent, this.#commentsContainer, RenderPosition.AFTERBEGIN);
-    render(this.#commentsCountComponent, this.#commentsContainer, RenderPosition.AFTERBEGIN);
+    render(this.#commentsBoardComponent, this.#commentsContainer, RenderPosition.AFTERBEGIN);
+    this.#renderCommentsCount(this.#comments.length);
     this.#renderComments(this.#comments);
+    this.#renderNewComment();
   }
 
-  #renderNewComment() {
-    render(this.#newCommentComponent, this.#commentsContainer);
-    this.#newCommentComponent.setEmojiChangeHandler(this.#handleEmojiChange);
-    this.#newCommentComponent.setFormSubmitHandler(this.#handleFormSubmit);
-    this.#newCommentComponent.setTextareaChangeHandler();
+  #renderCommentsCount(commentsCount) {
+    this.#commentsCountComponent = new CommentsCountView(commentsCount);
+    render(this.#commentsCountComponent, this.#commentsBoardComponent.element, RenderPosition.AFTERBEGIN);
   }
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#commentsBoardComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
+  #clearComments = () => {
+    this.#commentsPresenter.forEach((presenter) => presenter.destroy());
+    this.#commentsPresenter.clear();
+  };
 
   #renderComment(comment) {
-    const commentPresenter = new CommentPresenter(this.#commentsListComponent.element, this.#handleCommentsViewAction);
+    const commentPresenter = new CommentPresenter(this.#commentsBoardComponent.element.querySelector('.film-details__comments-list'), this.#handleCommentsViewAction);
     commentPresenter.init(comment);
     this.#commentsPresenter.set(comment.id, commentPresenter);
   }
@@ -61,56 +62,41 @@ export default class CommentsBoardPresenter {
     comments.forEach((comment) => this.#renderComment(comment));
   }
 
-  #renderCommentsCount() {
-    this.#commentsCountComponent = new CommentsCountView(this.#commentsCount);
-    render(this.#commentsCountComponent, this.#commentsContainer, RenderPosition.AFTERBEGIN);
+  #renderNewComment() {
+    render(this.#newCommentComponent, this.#commentsBoardComponent.element, RenderPosition.BEFOREEND);
+    this.#newCommentComponent.setEmojiChangeHandler(this.#handleEmojiChange);
+    this.#newCommentComponent.setFormSubmitHandler(this.#handleFormSubmit);
+    this.#newCommentComponent.setTextareaChangeHandler();
   }
 
-  #renderLoading() {
-    render(this.#loadingComponent, this.#commentsContainer, RenderPosition.AFTERBEGIN);
-  }
-
-  #clearComments = () => {
-    this.#commentsPresenter.forEach((presenter) => presenter.destroy());
-    this.#commentsPresenter.clear();
-  };
-
-  #removeCommentsCount = () => {
-    remove(this.#commentsCountComponent);
-  };
-
-  #removeLoading = () => {
-    remove(this.#loadingComponent);
-  };
-
-  /*setSaving = () => {
+  setSaving = () => {
     this.#newCommentComponent.updateElement({
       isDisabled: true,
     });
-  };*/
+  };
 
   setAborting = () => {
-    /*const resetFormState = () => {
+    const resetFormState = () => {
       this.#newCommentComponent.updateElement({
         isDisabled: false
       });
-    };*/
+    };
 
-    this.#newCommentComponent.shake(/*resetFormState*/);
+    this.#newCommentComponent.shake(resetFormState);
   };
 
   #handleCommentsViewAction = async (actionType, update) => {
     switch (actionType) {
       case USER_ACTION.ADD:
-        this.#removeCommentsCount();
+        remove(this.#commentsCountComponent);
         this.#renderLoading();
-        /*this.setSaving();*/
+        this.setSaving();
         try {
           await this.#commentsModel.addComment(COMMENT_UPDATE_TYPE.ADD, update);
         } catch(err) {
           this.setAborting();
-          this.#removeLoading();
-          this.#renderCommentsCount();
+          remove(this.#loadingComponent);
+          this.#renderCommentsCount(this.#comments.length);
         }
         break;
       case USER_ACTION.DELETE:
@@ -127,16 +113,15 @@ export default class CommentsBoardPresenter {
   #handleCommentsModelEvent = (updateType, update) => {
     switch (updateType) {
       case COMMENT_UPDATE_TYPE.DELETE:
-        this.#removeCommentsCount();
-        this.#commentsCount--;
-        this.#renderCommentsCount();
-        this.#commentsPresenter.get(update.id).destroy();
+        remove(this.#commentsCountComponent);
+        this.#renderCommentsCount(update.length);
+        this.#clearComments();
+        this.#renderComments(update);
         break;
       case COMMENT_UPDATE_TYPE.ADD:
-        this.#removeLoading();
-        this.#removeCommentsCount();
-        this.#commentsCount++;
-        this.#renderCommentsCount();
+        remove(this.#loadingComponent);
+        remove(this.#commentsCountComponent);
+        this.#renderCommentsCount(update.length);
         this.#clearComments();
         this.#renderComments(update);
         remove(this.#newCommentComponent);

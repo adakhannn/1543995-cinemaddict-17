@@ -47,16 +47,16 @@ export default class FilmsModel extends Observable {
       releaseCountry: film['film_info']['release']['release_country'],
     };
     const adaptedUserDetails = {...film['user_details'],
-      watchList:      film['user_details']['watchlist'],
+      watchList: film['user_details']['watchlist'],
       alreadyWatched: film['user_details']['already_watched'],
-      watchingDate:   film['user_details']['watching_date'],
+      watchingDate: film['user_details']['watching_date'],
     };
     const adaptedFilmInfo = {...film['film_info'],
-      release:          adaptedRelease,
-      userDetails:      adaptedUserDetails,
+      release: adaptedRelease,
+      userDetails: adaptedUserDetails,
       alternativeTitle: film['film_info']['alternative_title'],
-      totalRating:      film['film_info']['total_rating'],
-      ageRating:        film['film_info']['age_rating'],
+      totalRating: film['film_info']['total_rating'],
+      ageRating: film['film_info']['age_rating'],
     };
     const adaptedFilm = {...film,
       filmInfo: adaptedFilmInfo,

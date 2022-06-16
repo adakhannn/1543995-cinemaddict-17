@@ -1,4 +1,4 @@
-import AbstractStatefulView from '../../framework/view/abstract-view';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import {newCommentTemplate} from './new-comment-tpl';
 import {isEnterKey} from '../../utils/common';
 

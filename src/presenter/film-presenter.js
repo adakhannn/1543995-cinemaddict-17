@@ -29,9 +29,6 @@ export default class FilmPresenter {
     const prevCardComponent = this.#cardComponent;
     const prevPopupComponent = this.#popupComponent;
     this.#film = film;
-    this.#commentsModel = new CommentsModel(new CommentsApiService('https://17.ecmascript.pages.academy/cinemaddict', 'Basic sjkdfhhs4uhjk4'), this.#film);
-    this.#commentsModel.init();
-    this.#commentsModel.addObserver(this.#handleModelEvent);
     this.#cardComponent = new CardView(film);
     this.#popupComponent = new PopupView(film);
     this.#filmControlsComponent = new filmControlsView(film);
@@ -53,6 +50,7 @@ export default class FilmPresenter {
     if (this.#boardContainer.contains(prevPopupComponent.element)) {
       replace(this.#popupComponent, prevPopupComponent);
       render(this.#filmControlsComponent, this.#popupComponent.element.querySelector('.film-details__top-container'));
+      this.#renderCommentsBoard();
     }
     remove(prevCardComponent);
     remove(prevPopupComponent);
@@ -95,19 +93,22 @@ export default class FilmPresenter {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.#removePopup();
-      document.removeEventListener('keydown', this.#onEscKeyDown);
       this.#handleFilmsViewAction(FILM_UPDATE_TYPE.PATCH, this.#film);
+      document.removeEventListener('keydown', this.#onEscKeyDown);
     }
   };
 
   #renderCommentsBoard() {
-    this.#commentsBoardPresenter = new CommentsBoardPresenter(this.#popupComponent.element.querySelector('.film-details__comments-wrap'), this.#commentsModel);
+    this.#commentsBoardPresenter = new CommentsBoardPresenter(this.#popupComponent.element.querySelector('.film-details__bottom-container'), this.#commentsModel);
     this.#commentsBoardPresenter.init();
   }
 
   #handleAddPopup = () => {
     this.#removePopup();
     this.#addPopup();
+    this.#commentsModel = new CommentsModel(new CommentsApiService(), this.#film);
+    this.#commentsModel.init();
+    this.#commentsModel.addObserver(this.#handleModelEvent);
     document.addEventListener('keydown', this.#onEscKeyDown);
   };
 

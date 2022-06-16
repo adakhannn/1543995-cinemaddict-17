@@ -12,7 +12,7 @@ const main = body.querySelector('.main');
 const footer = body.querySelector('.footer');
 const footerStatistics = footer.querySelector('.footer__statistics');
 
-const filmsModel = new FilmsModel(new FilmsApiService('https://17.ecmascript.pages.academy/cinemaddict', 'Basic sjkdfhhs4uhjk4'));
+const filmsModel = new FilmsModel(new FilmsApiService());
 const filtersModel = new FiltersModel();
 const boardPresenter = new BoardPresenter(main, filmsModel, filtersModel);
 const filtersPresenter = new FiltersPresenter(main, filtersModel, filmsModel);

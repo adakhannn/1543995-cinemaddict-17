@@ -6,6 +6,9 @@ const Method = {
 };
 
 export default class FilmsApiService extends ApiService {
+  _endPoint = 'https://17.ecmascript.pages.academy/cinemaddict';
+  _authorization = 'Basic sjkdfhhs4uhjk4';
+
   get films() {
     return this._load({url: 'movies'})
       .then(ApiService.parseResponse);

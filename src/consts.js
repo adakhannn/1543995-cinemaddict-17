@@ -29,13 +29,13 @@ const USER_ACTION = {
 const FILM_UPDATE_TYPE = {
   PATCH: 'PATCH',
   MAJOR: 'MAJOR',
-  INIT:  'INIT',
+  INIT: 'INIT',
 };
 
 const COMMENT_UPDATE_TYPE = {
   DELETE: 'DELETE',
-  ADD:    'ADD',
-  INIT:   'INIT',
+  ADD: 'ADD',
+  INIT: 'INIT',
 };
 
 const NO_FILMS_TEXTS = {
