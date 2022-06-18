@@ -1,6 +1,6 @@
+import {USER_ACTION} from '../consts';
 import {remove, render} from '../framework/render';
 import CommentView from '../view/comment-view/comment-view';
-import {USER_ACTION} from '../consts';
 
 export default class CommentPresenter {
   #commentsContainer = null;

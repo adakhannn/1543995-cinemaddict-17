@@ -1,5 +1,5 @@
-import {moreButtonTemplate} from './more-button-tpl';
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
+import {moreButtonTemplate} from './more-button-tpl';
 
 export default class MoreButtonView extends AbstractStatefulView {
   get template() {

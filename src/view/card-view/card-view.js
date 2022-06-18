@@ -1,5 +1,5 @@
-import {cardTemplate} from './card-tpl';
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
+import {cardTemplate} from './card-tpl';
 
 export default class CardView extends AbstractStatefulView {
   #film = null;

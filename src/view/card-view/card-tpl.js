@@ -1,4 +1,4 @@
-import {getTimeFromMins, humanizeDate} from '../../utils/common';
+import {getTimeFromMins, humanizeDate, textTruncate} from '../../utils/common';
 
 export const cardTemplate = (film) => {
   const {comments, filmInfo} = film;
@@ -13,7 +13,7 @@ export const cardTemplate = (film) => {
           <span class="film-card__genre">${filmInfo.genre.join(' ')}</span>
         </p>
         <img src="${filmInfo.poster}" alt="${filmInfo.title}" class="film-card__poster">
-        <p class="film-card__description">${filmInfo.description}</p>
+        <p class="film-card__description">${textTruncate(filmInfo.description, 140)}</p>
         <span class="film-card__comments">${comments.length} comments</span>
       </a>
       <div class="film-card__controls">

@@ -1,5 +1,5 @@
-import Observable from '../framework/observable.js';
 import {COMMENT_UPDATE_TYPE} from '../consts';
+import Observable from '../framework/observable.js';
 
 export default class CommentsModel extends Observable {
   #commentsApiService = null;

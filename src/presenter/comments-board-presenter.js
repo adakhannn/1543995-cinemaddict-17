@@ -1,20 +1,21 @@
 import {COMMENT_UPDATE_TYPE, USER_ACTION} from '../consts';
 import {remove, render, RenderPosition} from '../framework/render';
-import CommentPresenter from './comment-presenter';
 import CommentsCountView from '../view/comments-container-view/comments-count-view';
 import CommentsBoardView from '../view/comments-board-view/comments-board-view';
 import NewCommentView from '../view/new-comment-view/new-comment-view';
 import LoadingView from '../view/loading-view/loading-view';
+import CommentPresenter from './comment-presenter';
+import {isEnterKey} from '../utils/common';
 
 export default class CommentsBoardPresenter {
   #comments = null;
   #commentsContainer = null;
   #commentsModel = null;
-  #commentsPresenter = new Map();
   #commentsCountComponent = null;
   #commentsBoardComponent = new CommentsBoardView();
   #newCommentComponent = new NewCommentView();
   #loadingComponent = new LoadingView();
+  #commentsPresenter = new Map();
 
   constructor(commentsContainer, commentsModel) {
     this.#commentsContainer = commentsContainer;
@@ -28,7 +29,18 @@ export default class CommentsBoardPresenter {
 
   init() {
     this.#renderCommentsBoard();
+    document.addEventListener('keydown', this.#formSubmitHandler);
   }
+
+  #formSubmitHandler = (evt) => {
+    if(evt.ctrlKey && isEnterKey(evt)) {
+      evt.preventDefault();
+      const {_state} = this.#newCommentComponent;
+      if (_state.newComment && _state.checkedEmoji) {
+        this.#handleFormSubmit({comment: _state.newComment, emotion: _state.checkedEmoji});
+      }
+    }
+  };
 
   #renderCommentsBoard() {
     this.#comments = this.comments;
@@ -65,7 +77,6 @@ export default class CommentsBoardPresenter {
   #renderNewComment() {
     render(this.#newCommentComponent, this.#commentsBoardComponent.element, RenderPosition.BEFOREEND);
     this.#newCommentComponent.setEmojiChangeHandler(this.#handleEmojiChange);
-    this.#newCommentComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#newCommentComponent.setTextareaChangeHandler();
   }
 
@@ -81,7 +92,6 @@ export default class CommentsBoardPresenter {
         isDisabled: false
       });
     };
-
     this.#newCommentComponent.shake(resetFormState);
   };
 

@@ -1,5 +1,5 @@
-import Observable from '../framework/observable';
 import {FILM_UPDATE_TYPE} from '../consts';
+import Observable from '../framework/observable';
 export default class FilmsModel extends Observable {
   #filmsApiService = null;
   #films = [];
@@ -61,7 +61,6 @@ export default class FilmsModel extends Observable {
     const adaptedFilm = {...film,
       filmInfo: adaptedFilmInfo,
     };
-
     delete adaptedFilm['filmInfo']['release']['release_country'];
     delete adaptedFilm['filmInfo']['userDetails']['watchlist'];
     delete adaptedFilm['filmInfo']['userDetails']['already_watched'];

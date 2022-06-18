@@ -1,7 +1,6 @@
 import {FILM_COUNT_PER_STEP, SORT_TYPE, FILM_UPDATE_TYPE, FILTER_TYPE} from '../consts';
 import {remove, render, RenderPosition} from '../framework/render';
-import {sortFilmDate, sortFilmRating} from '../utils/sort.js';
-import {filter} from '../utils/filter.js';
+import FilmPresenter from './film-presenter';
 import BoardView from '../view/board-view/board-view';
 import ListView from '../view/list-view/list-view';
 import MoreButtonView from '../view/more-button-view/more-button-view';
@@ -9,7 +8,10 @@ import SortView from '../view/sort-view/sort-view';
 import CardEmptyView from '../view/card-empty-view/card-empty-view';
 import ContainerView from '../view/container-view/container-view';
 import LoadingView from '../view/loading-view/loading-view';
-import FilmPresenter from './film-presenter';
+import UserNameView from '../view/user-name-view/user-name-view';
+import StatisticsView from '../view/statistics-view/statistics-view';
+import {filter} from '../utils/filter.js';
+import {sortFilmDate, sortFilmRating} from '../utils/sort.js';
 
 export default class BoardPresenter {
   #renderedFilmCount = FILM_COUNT_PER_STEP;
@@ -17,6 +19,8 @@ export default class BoardPresenter {
   #filterType = FILTER_TYPE.ALL;
   #isLoading = true;
   #boardContainer = null;
+  #userNameContainer  = null;
+  #statisticsContainer  = null;
   #filmsModel = null;
   #filtersModel = null;
   #sortComponent = null;
@@ -26,10 +30,14 @@ export default class BoardPresenter {
   #listComponent = new ListView();
   #containerComponent = new ContainerView();
   #loadingComponent = new LoadingView();
+  #userNameComponent = null;
+  #statisticsComponent = null;
   #filmPresenter = new Map();
 
-  constructor(boardContainer, filmsModel, filtersModel) {
+  constructor(boardContainer, filmsModel, filtersModel, userNameContainer, statisticsContainer) {
     this.#boardContainer = boardContainer;
+    this.#userNameContainer = userNameContainer;
+    this.#statisticsContainer = statisticsContainer;
     this.#filmsModel = filmsModel;
     this.#filtersModel = filtersModel;
     this.#filmsModel.addObserver(this.#handleFilmsModelEvent);
@@ -76,6 +84,9 @@ export default class BoardPresenter {
   #handleFilmsModelEvent = (updateType, data) => {
     switch (updateType) {
       case FILM_UPDATE_TYPE.PATCH:
+        remove(this.#userNameComponent);
+        this.#userNameComponent = new UserNameView(this.films);
+        render(this.#userNameComponent, this.#userNameContainer);
         this.#filmPresenter.get(data.id).init(data);
         break;
       case FILM_UPDATE_TYPE.MAJOR:
@@ -83,9 +94,12 @@ export default class BoardPresenter {
         this.#renderBoard();
         break;
       case FILM_UPDATE_TYPE.INIT:
+        this.#userNameComponent = new UserNameView(this.films);
+        render(this.#userNameComponent, this.#userNameContainer);
         this.#isLoading = false;
         remove(this.#loadingComponent);
         this.#renderBoard();
+        this.#renderStatistics();
         break;
     }
   };
@@ -94,6 +108,11 @@ export default class BoardPresenter {
     this.#sortComponent = new SortView(this.#currentSortType);
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
     render(this.#sortComponent, this.#boardComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderStatistics() {
+    this.#statisticsComponent = new StatisticsView(this.films);
+    render(this.#statisticsComponent, this.#statisticsContainer);
   }
 
   #renderFilm(film) {

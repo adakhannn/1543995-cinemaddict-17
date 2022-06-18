@@ -1,6 +1,6 @@
 import he from 'he';
-import {humanizeDate} from '../../utils/common';
 import dayjs from 'dayjs';
+import {humanizeDate} from '../../utils/common';
 
 export const commentTemplate = (comment) => {
   const getHumanizeDate = () => {

@@ -1,6 +1,5 @@
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import {newCommentTemplate} from './new-comment-tpl';
-import {isEnterKey} from '../../utils/common';
 
 export default class NewCommentView extends AbstractStatefulView {
   constructor(newCommentState = {}) {
@@ -14,11 +13,6 @@ export default class NewCommentView extends AbstractStatefulView {
 
   static parseCommentToState = (comment) => ({...comment,
     isDisabled: false,
-  });
-
-  static parseStateToComment = (state) => ({
-    comment:    state.newComment,
-    emotion:    state.checkedEmoji,
   });
 
   setEmojiChangeHandler = (callback) => {
@@ -47,23 +41,8 @@ export default class NewCommentView extends AbstractStatefulView {
     this._state.newComment = evt.target.value;
   };
 
-  setFormSubmitHandler = (callback) => {
-    this._callback.formSubmit = callback;
-    document.addEventListener('keydown', this.#formSubmitHandler);
-  };
-
-  #formSubmitHandler = (evt) => {
-    if(evt.ctrlKey && isEnterKey(evt)) {
-      evt.preventDefault();
-      if (this._state.newComment !== undefined && this._state.checkedEmoji !== undefined) {
-        this._callback.formSubmit(NewCommentView.parseStateToComment(this._state));
-      }
-    }
-  };
-
   _restoreHandlers = () => {
     this.setEmojiChangeHandler(this._callback.emojiChange);
-    this.setFormSubmitHandler(this._callback.formSubmit);
     this.setTextareaChangeHandler();
   };
 }

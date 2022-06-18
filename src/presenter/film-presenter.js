@@ -1,22 +1,22 @@
 import {COMMENT_UPDATE_TYPE, FILM_UPDATE_TYPE} from '../consts.js';
 import {remove, render, replace} from '../framework/render';
-import {isEscapeKey} from '../utils/common';
+import CommentsModel from '../model/comments-model';
 import CardView from '../view/card-view/card-view';
 import PopupView from '../view/popup-view/popup-view';
-import CommentsBoardPresenter from './comments-board-presenter';
 import filmControlsView from '../view/film-controls-view/film-controls-view';
-import CommentsModel from '../model/comments-model';
+import CommentsBoardPresenter from './comments-board-presenter';
 import CommentsApiService from '../comments-api-service';
+import {isEscapeKey} from '../utils/common';
 
 export default class FilmPresenter {
   #film = null;
+  #filmsModel = null;
+  #commentsModel = null;
   #boardContainer = null;
   #cardsContainer = null;
   #cardComponent = null;
   #popupComponent = null;
   #filmControlsComponent = null;
-  #filmsModel = null;
-  #commentsModel = null;
   #commentsBoardPresenter = null;
 
   constructor(boardContainer, cardsContainer, filmsModel) {
@@ -69,7 +69,7 @@ export default class FilmPresenter {
     }
   };
 
-  #handleModelEvent = (updateType) => {
+  #handleCommentsModelEvent = (updateType) => {
     if (updateType === COMMENT_UPDATE_TYPE.INIT) {
       this.#renderCommentsBoard();
     }
@@ -108,7 +108,7 @@ export default class FilmPresenter {
     this.#addPopup();
     this.#commentsModel = new CommentsModel(new CommentsApiService(), this.#film);
     this.#commentsModel.init();
-    this.#commentsModel.addObserver(this.#handleModelEvent);
+    this.#commentsModel.addObserver(this.#handleCommentsModelEvent);
     document.addEventListener('keydown', this.#onEscKeyDown);
   };
 

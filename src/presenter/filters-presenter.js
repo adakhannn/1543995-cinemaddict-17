@@ -1,7 +1,7 @@
+import {FILTER_TYPE, FILM_UPDATE_TYPE} from '../consts.js';
 import {render, replace, remove} from '../framework/render.js';
 import FiltersView from '../view/filters-view/filters-view';
 import {filter} from '../utils/filter.js';
-import {FILTER_TYPE, FILM_UPDATE_TYPE} from '../consts.js';
 
 export default class FiltersPresenter {
   #filterContainer = null;

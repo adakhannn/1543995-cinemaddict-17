@@ -1,5 +1,5 @@
-import {commentTemplate} from './comment-tpl';
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
+import {commentTemplate} from './comment-tpl';
 
 export default class CommentView extends AbstractStatefulView {
   constructor(comment) {

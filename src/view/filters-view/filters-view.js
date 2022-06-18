@@ -1,5 +1,5 @@
-import {filtersTemplate} from './filters-tpl';
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
+import {filtersTemplate} from './filters-tpl';
 
 export default class FiltersView extends AbstractStatefulView {
   #filters = null;

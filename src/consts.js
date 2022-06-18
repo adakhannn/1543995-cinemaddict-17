@@ -1,7 +1,7 @@
 const FILM_COUNT_PER_STEP = 5;
 
 const FILTER_TYPE = {
-  ALL: 'All',
+  ALL: 'All movies',
   WATCHLIST: 'Watchlist',
   HISTORY: 'History',
   FAVORITES: 'Favorites',
@@ -40,9 +40,9 @@ const COMMENT_UPDATE_TYPE = {
 
 const NO_FILMS_TEXTS = {
   [FILTER_TYPE.ALL]: 'There are no movies in our database',
-  [FILTER_TYPE.WATCHLIST]: 'There are no watchlist movies now',
-  [FILTER_TYPE.HISTORY]: 'There are no history movies now',
-  [FILTER_TYPE.FAVORITES]: 'There are no favorites movies now',
+  [FILTER_TYPE.WATCHLIST]: 'There are no movies to watch now',
+  [FILTER_TYPE.HISTORY]: 'There are no watched movies now',
+  [FILTER_TYPE.FAVORITES]: 'There are no favorite movies now',
 };
 
 export {FILM_COUNT_PER_STEP, FILTER_TYPE, EMOTIONS, SORT_TYPE, FILM_UPDATE_TYPE, USER_ACTION, NO_FILMS_TEXTS, COMMENT_UPDATE_TYPE};

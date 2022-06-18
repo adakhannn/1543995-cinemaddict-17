@@ -12,4 +12,12 @@ const isEscapeKey = (evt) => evt.key === 'Escape';
 
 const isEnterKey = (evt) => evt.keyCode === 13;
 
-export {humanizeDate, getTimeFromMins, isEscapeKey, isEnterKey};
+const textTruncate = function(str, length, ending = '...') {
+  if (str.length > length) {
+    return str.substring(0, length - ending.length) + ending;
+  } else {
+    return str;
+  }
+};
+
+export {humanizeDate, getTimeFromMins, isEscapeKey, isEnterKey, textTruncate};
