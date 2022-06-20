@@ -11,10 +11,6 @@ export default class CommentView extends AbstractStatefulView {
     return commentTemplate(this._state);
   }
 
-  static parseCommentToState = (comment) => ({...comment,
-    isDeleting: false,
-  });
-
   setDeleteClickHandler = (callback) => {
     this._callback.deleteClick = callback;
     this.element.querySelector('.film-details__comment-delete').addEventListener('click', this.#commentDeleteClickHandler);
@@ -28,4 +24,8 @@ export default class CommentView extends AbstractStatefulView {
   _restoreHandlers = () => {
     this.setDeleteClickHandler(this._callback.deleteClick);
   };
+
+  static parseCommentToState = (comment) => ({...comment,
+    isDeleting: false,
+  });
 }

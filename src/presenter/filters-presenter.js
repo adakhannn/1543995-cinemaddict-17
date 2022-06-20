@@ -1,7 +1,7 @@
 import {FILTER_TYPE, FILM_UPDATE_TYPE} from '../consts.js';
 import {render, replace, remove} from '../framework/render.js';
 import FiltersView from '../view/filters-view/filters-view';
-import {filter} from '../utils/filter.js';
+import {filterInfo} from '../utils/filter.js';
 
 export default class FiltersPresenter {
   #filterContainer = null;
@@ -27,7 +27,7 @@ export default class FiltersPresenter {
       filters.push(
         {
           name: FILTER_TYPE[item],
-          count: filter[FILTER_TYPE[item]](films).length,
+          count: filterInfo[FILTER_TYPE[item]](films).length,
         }
       );
     }
@@ -39,7 +39,7 @@ export default class FiltersPresenter {
     const filters = this.filters;
     const prevFilterComponent = this.#filterComponent;
 
-    this.#filterComponent = new FiltersView(filters, this.#filtersModel.filter);
+    this.#filterComponent = new FiltersView(filters, this.#filtersModel.filterType);
     this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
 
     if (prevFilterComponent === null) {
@@ -56,7 +56,7 @@ export default class FiltersPresenter {
   };
 
   #handleFilterTypeChange = (filterType) => {
-    if (this.#filtersModel.filter === filterType) {
+    if (this.#filtersModel.filterType === filterType) {
       return;
     }
 

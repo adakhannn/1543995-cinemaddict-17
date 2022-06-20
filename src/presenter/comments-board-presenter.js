@@ -33,7 +33,7 @@ export default class CommentsBoardPresenter {
   }
 
   #formSubmitHandler = (evt) => {
-    if(evt.ctrlKey && isEnterKey(evt)) {
+    if((evt.ctrlKey && isEnterKey(evt)) || (evt.metaKey && isEnterKey(evt))) {
       evt.preventDefault();
       const {_state} = this.#newCommentComponent;
       if (_state.newComment && _state.checkedEmoji) {

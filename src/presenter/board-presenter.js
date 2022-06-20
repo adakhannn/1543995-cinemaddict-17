@@ -10,7 +10,7 @@ import ContainerView from '../view/container-view/container-view';
 import LoadingView from '../view/loading-view/loading-view';
 import UserNameView from '../view/user-name-view/user-name-view';
 import StatisticsView from '../view/statistics-view/statistics-view';
-import {filter} from '../utils/filter.js';
+import {filterInfo} from '../utils/filter.js';
 import {sortFilmDate, sortFilmRating} from '../utils/sort.js';
 
 export default class BoardPresenter {
@@ -45,9 +45,9 @@ export default class BoardPresenter {
   }
 
   get films() {
-    this.#filterType = this.#filtersModel.filter;
+    this.#filterType = this.#filtersModel.filterType;
     const films = this.#filmsModel.films;
-    const filteredFilms = filter[this.#filterType](films);
+    const filteredFilms = filterInfo[this.#filterType](films);
     switch (this.#currentSortType) {
       case SORT_TYPE.DATE:
         return filteredFilms.sort(sortFilmDate);
@@ -85,7 +85,7 @@ export default class BoardPresenter {
     switch (updateType) {
       case FILM_UPDATE_TYPE.PATCH:
         remove(this.#userNameComponent);
-        this.#userNameComponent = new UserNameView(this.films);
+        this.#userNameComponent = new UserNameView(this.#filmsModel.films);
         render(this.#userNameComponent, this.#userNameContainer);
         this.#filmPresenter.get(data.id).init(data);
         break;
@@ -94,7 +94,7 @@ export default class BoardPresenter {
         this.#renderBoard();
         break;
       case FILM_UPDATE_TYPE.INIT:
-        this.#userNameComponent = new UserNameView(this.films);
+        this.#userNameComponent = new UserNameView(this.#filmsModel.films);
         render(this.#userNameComponent, this.#userNameContainer);
         this.#isLoading = false;
         remove(this.#loadingComponent);
@@ -138,14 +138,14 @@ export default class BoardPresenter {
 
   #renderBoard() {
     render(this.#containerComponent, this.#listComponent.element);
-    if (this.#isLoading) {
-      this.#renderLoading();
-      return;
-    }
     const films = this.films;
     const filmCount = films.length;
     this.#renderMainContainer();
     this.#renderList();
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
     if (filmCount === 0) {
       this.#renderCardEmptyInfo();
       return;
@@ -166,11 +166,7 @@ export default class BoardPresenter {
     if (this.#cardEmptyComponent) {
       remove(this.#cardEmptyComponent);
     }
-    if (resetRenderedFilmCount) {
-      this.#renderedFilmCount = FILM_COUNT_PER_STEP;
-    } else {
-      this.#renderedFilmCount = Math.min(filmCount, this.#renderedFilmCount);
-    }
+    this.#renderedFilmCount = resetRenderedFilmCount ? FILM_COUNT_PER_STEP : Math.min(filmCount, this.#renderedFilmCount);
     if (resetSortType) {
       this.#currentSortType = SORT_TYPE.DEFAULT;
     }

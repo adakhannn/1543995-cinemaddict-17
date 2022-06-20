@@ -6,9 +6,6 @@ const Method = {
 };
 
 export default class CommentsApiService extends ApiService {
-  _endPoint = 'https://17.ecmascript.pages.academy/cinemaddict';
-  _authorization = 'Basic sjkdfhhs4uhjk4';
-
   getComments = (filmId) => this._load({url: `comments/${filmId}`}).then(ApiService.parseResponse);
 
   addComment = async (comment, filmId) => {

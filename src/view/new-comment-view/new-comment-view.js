@@ -11,10 +11,6 @@ export default class NewCommentView extends AbstractStatefulView {
     return newCommentTemplate(this._state);
   }
 
-  static parseCommentToState = (comment) => ({...comment,
-    isDisabled: false,
-  });
-
   setEmojiChangeHandler = (callback) => {
     this._callback.emojiChange = callback;
     this.element.querySelectorAll('.film-details__emoji-item').forEach((item) => {
@@ -45,4 +41,8 @@ export default class NewCommentView extends AbstractStatefulView {
     this.setEmojiChangeHandler(this._callback.emojiChange);
     this.setTextareaChangeHandler();
   };
+
+  static parseCommentToState = (comment) => ({...comment,
+    isDisabled: false,
+  });
 }

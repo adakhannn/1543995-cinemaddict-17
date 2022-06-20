@@ -6,7 +6,7 @@ export default class ApiService {
    * @param {string} endPoint Адрес сервера
    * @param {string} authorization Авторизационный токен
    */
-  constructor(endPoint, authorization) {
+  constructor(endPoint = 'https://17.ecmascript.pages.academy/cinemaddict', authorization= 'Basic sjkdfhhs4uhjk4') {
     this._endPoint = endPoint;
     this._authorization = authorization;
   }
