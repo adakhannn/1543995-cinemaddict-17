@@ -10,8 +10,10 @@ import ContainerView from '../view/container-view/container-view';
 import LoadingView from '../view/loading-view/loading-view';
 import UserNameView from '../view/user-name-view/user-name-view';
 import StatisticsView from '../view/statistics-view/statistics-view';
+import TopRatedBoardView from '../view/top-rated-board-view/top-rated-board-view';
+import MostCommentedBoardView from '../view/most-commented-board-view/most-commented-board-view';
 import {filterInfo} from '../utils/filter.js';
-import {sortFilmDate, sortFilmRating} from '../utils/sort.js';
+import {sortCommentsLength, sortFilmDate, sortFilmRating} from '../utils/sort.js';
 
 export default class BoardPresenter {
   #renderedFilmCount = FILM_COUNT_PER_STEP;
@@ -28,11 +30,15 @@ export default class BoardPresenter {
   #cardEmptyComponent = null;
   #boardComponent = new BoardView();
   #listComponent = new ListView();
+  #topRatedBoardComponent = new TopRatedBoardView();
+  #mostCommentedBoardComponent = new MostCommentedBoardView();
   #containerComponent = new ContainerView();
   #loadingComponent = new LoadingView();
   #userNameComponent = null;
   #statisticsComponent = null;
   #filmPresenter = new Map();
+  #topRatedFilmsPresenter = new Map();
+  #mostCommentedFilmsPresenter = new Map();
 
   constructor(boardContainer, filmsModel, filtersModel, userNameContainer, statisticsContainer) {
     this.#boardContainer = boardContainer;
@@ -65,7 +71,7 @@ export default class BoardPresenter {
     const filmCount = this.films.length;
     const newRenderedFilmCount = Math.min(filmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP);
     const films = this.films.slice(this.#renderedFilmCount, newRenderedFilmCount);
-    this.#renderFilms(films);
+    this.#renderFilms(films, this.#containerComponent.element);
     this.#renderedFilmCount = newRenderedFilmCount;
     if (this.#renderedFilmCount >= filmCount) {
       remove(this.#moreButtonComponent);
@@ -87,6 +93,10 @@ export default class BoardPresenter {
         remove(this.#userNameComponent);
         this.#userNameComponent = new UserNameView(this.#filmsModel.films);
         render(this.#userNameComponent, this.#userNameContainer);
+        this.#clearTopRateBoard();
+        this.#renderTopRatedBoard();
+        this.#clearMostCommentedBoard();
+        this.#renderMostCommentedBoard();
         this.#filmPresenter.get(data.id).init(data);
         break;
       case FILM_UPDATE_TYPE.MAJOR:
@@ -115,14 +125,30 @@ export default class BoardPresenter {
     render(this.#statisticsComponent, this.#statisticsContainer);
   }
 
-  #renderFilm(film) {
-    const filmPresenter = new FilmPresenter(this.#boardContainer, this.#containerComponent.element, this.#filmsModel);
+  #renderFilm(film, renderContainer) {
+    const filmPresenter = new FilmPresenter(this.#boardContainer, renderContainer, this.#filmsModel);
     filmPresenter.init(film);
     this.#filmPresenter.set(film.id, filmPresenter);
   }
 
-  #renderFilms(films) {
-    films.forEach((film) => this.#renderFilm(film));
+  #renderFilms(films, renderContainer) {
+    films.forEach((film) => this.#renderFilm(film, renderContainer));
+  }
+
+  #renderTopRatedFilm(film, renderContainer) {
+    const topRatedFilmsPresenter = new FilmPresenter(this.#boardContainer, renderContainer, this.#filmsModel);
+    topRatedFilmsPresenter.init(film);
+    this.#topRatedFilmsPresenter.set(film.id, topRatedFilmsPresenter);
+  }
+
+  #renderTopRatedFilms(films, renderContainer) {
+    films.forEach((film) => this.#renderTopRatedFilm(film, renderContainer));
+  }
+
+  #renderMostCommentedFilm(film, renderContainer) {
+    const mostCommentedFilmsPresenter = new FilmPresenter(this.#boardContainer, renderContainer, this.#filmsModel);
+    mostCommentedFilmsPresenter.init(film);
+    this.#mostCommentedFilmsPresenter.set(film.id, mostCommentedFilmsPresenter);
   }
 
   #renderCardEmptyInfo() {
@@ -151,10 +177,12 @@ export default class BoardPresenter {
       return;
     }
     this.#renderSort();
-    this.#renderFilms(films.slice(0, Math.min(filmCount, this.#renderedFilmCount)));
+    this.#renderFilms(films.slice(0, Math.min(filmCount, this.#renderedFilmCount)), this.#containerComponent.element);
     if (filmCount > this.#renderedFilmCount) {
       this.#renderMoreButton();
     }
+    this.#renderTopRatedBoard();
+    this.#renderMostCommentedBoard();
   }
 
   #clearBoard = ({resetRenderedFilmCount = false, resetSortType = false} = {}) => {
@@ -170,6 +198,8 @@ export default class BoardPresenter {
     if (resetSortType) {
       this.#currentSortType = SORT_TYPE.DEFAULT;
     }
+    this.#clearTopRateBoard();
+    this.#clearMostCommentedBoard();
   };
 
   #renderMainContainer() {
@@ -182,5 +212,39 @@ export default class BoardPresenter {
 
   #renderLoading = () => {
     render(this.#loadingComponent, this.#listComponent.element);
+  };
+
+  #renderTopRatedBoard = () => {
+    const films = this.#filmsModel.films;
+    const topTwoRatedFilms = films.sort(sortFilmRating).slice(0, 2);
+    if (topTwoRatedFilms) {
+      render(this.#topRatedBoardComponent, this.#boardComponent.element);
+      this.#renderTopRatedFilms(topTwoRatedFilms, this.#topRatedBoardComponent.element.querySelector('.films-list__container'));
+    }
+  };
+
+  #clearTopRateBoard = () => {
+    remove(this.#topRatedBoardComponent);
+    this.#topRatedFilmsPresenter.forEach((presenter) => presenter.destroy());
+    this.#topRatedFilmsPresenter.clear();
+  };
+
+  #renderMostCommentedBoard = () => {
+    const films = this.#filmsModel.films;
+    const topTwoCommentedFilms = films.sort(sortCommentsLength).slice(0, 2);
+    if (topTwoCommentedFilms[0].comments.length !== 0) {
+      render(this.#mostCommentedBoardComponent, this.#boardComponent.element);
+      topTwoCommentedFilms.forEach((film) => {
+        if (film.comments.length > 0) {
+          this.#renderMostCommentedFilm(film, this.#mostCommentedBoardComponent.element.querySelector('.films-list__container'));
+        }
+      });
+    }
+  };
+
+  #clearMostCommentedBoard = () => {
+    remove(this.#mostCommentedBoardComponent);
+    this.#mostCommentedFilmsPresenter.forEach((presenter) => presenter.destroy());
+    this.#mostCommentedFilmsPresenter.clear();
   };
 }

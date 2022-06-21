@@ -28,4 +28,10 @@ const sortFilmRating = (filmA, filmB) => {
   return weight ?? filmB.filmInfo.totalRating - filmA.filmInfo.totalRating;
 };
 
-export {sortFilmDate, sortFilmRating};
+const sortCommentsLength = (filmA, filmB) => {
+  const weight = getWeightForNullData(filmA.comments.length, filmB.comments.length);
+
+  return weight ?? filmB.comments.length - filmA.comments.length;
+};
+
+export {sortFilmDate, sortFilmRating, sortCommentsLength};
